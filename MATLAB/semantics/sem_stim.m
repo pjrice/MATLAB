@@ -1,3 +1,16 @@
+%Hi Stephanie!
+
+%  ,_     _
+%  |\\_,-~/
+%  / _  _ |    ,--.
+% (  @  @ )   / ,-'
+%  \  _T_/-._( (
+%  /         `. \
+% |         _  \ |
+%  \ \ ,  /      |
+%   || |-_\__   /
+%  ((_/`(____,-'
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %group words by length then find most similar pairs
 
@@ -7,6 +20,11 @@
 % 
 % ph = find(values==0);
 % values(ph) = NaN;
+
+%load file
+[fname, pathname] = uigetfile('*.mat', 'Pick the datafile');
+
+load(strcat(pathname,fname))
 
 %group by word length
 wordlengths = cellfun(@length, wordlist);
@@ -18,7 +36,6 @@ for i = min(wordlengths):max(wordlengths)
 end
 
 %quick and dirty word group index
-
 word_groups(1:35) = 1;
 word_groups(36:65) = 2;
 word_groups(66:99) = 3;
@@ -30,13 +47,14 @@ word_groups = word_groups';
 for i = 1:length(wordlen_idx)
     
     point_distances{i} = triu(squareform(pdist(values(wordlen_idx{i},:))));
+    pdvec{i} = pdist(values(wordlen_idx{i},:));
     
 end
 
 %from here look for small distances as well-paired words across all
 %measures
 
-hist(point_distances{5},50)
+%hist(pdvec{5},50)
 %from histograms, arbitrary threshold of 500 set (include all word pairs
 %below threshold) - this is bullshit for 7 letter words
 
