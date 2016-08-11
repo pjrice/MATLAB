@@ -8,8 +8,7 @@ filename = strcat(filename,filename_append);
 
 %base path for images?
 % imgbasepath = 'C:\temp_patrick\RP_images\';
-% imgbasepath = 'P:\data\DRI\RP_images\';
-imgbasepath = 'Z:\Work\UW\projects\RR_TMS\RP_images\';
+imgbasepath = 'P:\data\DRI\RP_images\';
 
 %which hand are we working with?
 hand = input('Which hand are we working with? 0 for left, 1 for right: ');
@@ -17,7 +16,7 @@ hand = input('Which hand are we working with? 0 for left, 1 for right: ');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
 %establish UDP link to TDT RZ box in order to mark timestamps
-% udpobj = udp('127.0.0.1', 4012); %edit host and port after it's set up
+udpobj = udp('127.0.0.1', 4012); %edit host and port after it's set up
 
 %default output buffer size is 512 bytes, make sure the I/O buffers are large
 %enough to handle the data being sent/received
@@ -25,7 +24,7 @@ hand = input('Which hand are we working with? 0 for left, 1 for right: ');
 % udpobj.OutputBufferSize = 8000; %in bytes
 
 %open udp object
-% fopen(udpobj)
+fopen(udpobj)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Setup PTB with some default values
@@ -75,6 +74,23 @@ Screen('BlendFunction',window,'GL_SRC_ALPHA','GL_ONE_MINUS_SRC_ALPHA');
 
 HideCursor
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------
+%                       Trial information
+%----------------------------------------------------------------------
+
+numblocks = 1;
+numtrials = 6;
+
+stimchoices = [2,9];
+
+fingers{1} = 'INDEX';
+fingers{2} = 'MIDDLE';
+evenodd{1} = 'EVEN';
+evenodd{2} = 'ODD';
+symbols = ['A' 'B'];
+
 %load images
 A_imgloc = strcat(imgbasepath,'A.png');
 B_imgloc = strcat(imgbasepath,'B.png');
@@ -113,86 +129,42 @@ if s1 > screenYpixels || s2 > screenYpixels
     return;
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+chooser = [1 2];
 
-%----------------------------------------------------------------------
-%                       Trial information
-%----------------------------------------------------------------------
+%randomize itis/isis
+itis = randi([60 210],numtrials,numblocks);
+isis = randi([15 120],numtrials,numblocks);
 
-numtrials = 160;
-numblocks = 2;
 
-fingers{1} = 'INDEX';
-fingers{2} = 'MIDDLE';
-evenodd{1} = 'EVEN';
-evenodd{2} = 'ODD';
-symbols = ['A' 'B'];
-
-%establish base vectors to repmat into proper size
-%possible stimulus values
-stimchoices = repmat([2:9]',4,1);
-
-%even/odd presentation
-  %1==Even
-evenoddchooser = repmat(cat(1,sort(repmat([1 2]',...
-    length(stimchoices)/8,numblocks)),flipud(sort(repmat([1 2]',...
-    length(stimchoices)/8,numblocks)))),2,1);
-
-%A/B presentation; index/middle presentation
-  %1==A or Index
-symfinchooser = cat(1,repmat([1 1 2 2]',...
-    length(stimchoices)/8,numblocks/2),flipud(repmat([1 1 2 2]',...
-    length(stimchoices)/8,numblocks/2))); 
-
-%placement of A and B on stimulus screen
-%generate a set for each block because letter placement occurs in finger
-%condition (even though it's meaningless)
-  %1==A
-abchooser = sort(repmat([1 2]',numtrials/2,numblocks));
-
-%repmat base vectors to proper size
-stimuli = repmat(stimchoices,numtrials/length(stimchoices),numblocks);
-evenoddchooser = repmat(evenoddchooser,numtrials/length(evenoddchooser),numblocks/2);
-symfinchooser = repmat(symfinchooser,numtrials/length(symfinchooser),numblocks/2);
-
-%Shuffle the stimuli, then use the index of the shuffle to move the rest
-%into the same postions (so trial presentation is randomized, but we don't
-%lose our balancing)
-%Shuffle shuffles columns of stimuli(trialXblock), s_index is index of
-%shuffles for each column (aka each set of trials for a block)
-[stimuli,s_index] = Shuffle(stimuli);
-evenoddchooser = evenoddchooser(s_index);
-symbolchooser = symfinchooser(s_index(:,1));
-fingerchooser = symfinchooser(s_index(:,2));
-abchooser = abchooser(s_index);
-
-%generate "antiABchooser" to print the other character
-for i = 1:numblocks
+%randomize trial stuffs
+for block = 1:numblocks
     
-    for ii = 1:numtrials
+    %randomize order of condition presentation and record it
+    condMatrixtemp = sort(repmat([0 1], 1, numtrials/2));
+    condMatrix(:,block) = condMatrixtemp(:,Shuffle(1:numtrials))'; %0==symbols 1==fingers
+    
+    for trial = 1:numtrials
         
-        if abchooser(ii,i)==1
-            
-            antiabchooser(ii,i) = 2;
-            
-        else
-            
-            antiabchooser(ii,i) = 1;
-            
-        end
+        %determine stimulus and record what it is
+        stim(trial,block) = randi(stimchoices);
+        printstim_l1(trial,block) = num2str(stim(trial,block));
         
+        %decide which symbols/fingers are assigned to even/odd and record
+        evenoddchooser{trial,block} = Shuffle(chooser);  %1==Even
+        symbolchooser{trial,block} = Shuffle(chooser);  %1==A
+        fingerchooser{trial,block} = Shuffle(chooser);  %1==Index
+        abchooser{trial,block} = Shuffle(chooser);  %1==A
+        
+        %make strings to present
+        %decide whether to print even or odd
+        print_evenodd{trial,block} = [evenodd{evenoddchooser{trial,block}(1)}];
+
+        %determine placement of A and B on screen
+        printstim_l2(trial,block) = symbols(abchooser{trial,block}(1)); %prints on left of screen
+        printstim_l3(trial,block) = symbols(abchooser{trial,block}(2)); %prints on right of screen
+
     end
 end
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%print stuff        
-print_evenodd = evenodd(evenoddchooser);  
-printstim_l1 = num2str(stimuli,'%1d');  
-printstim_l2 = symbols(abchooser);
-printstim_l3 = symbols(antiabchooser);
-
-
 %----------------------------------------------------------------------
 %                       Timing Information
 %----------------------------------------------------------------------
@@ -207,13 +179,6 @@ holdTimeFrames = round(holdTimeSecs/ifi);
 spTimeSecs = 5;
 spTimeFrames = round(spTimeSecs/ifi);
 
-%Number of frames to wait before re-drawing
-waitframes = 1;
-
-%randomize itis/isis
-itis = randi([60 210],numtrials,numblocks);
-isis = randi([15 120],numtrials,numblocks);
-
 %ISD
 % isdTimeSecs = 2;
 % isdTimeFrames = round(isdTimeSecs/ifi);
@@ -221,16 +186,19 @@ isis = randi([15 120],numtrials,numblocks);
 %know the rule before they proceed; artificially inject some very short
 %ISIs at random trials as true checks.
 
-% short_isi = 15;
-% 
-% sym_ind = find(condMatrix==0);
-% fin_ind = find(condMatrix==1);
-% 
-% inj_s = datasample(sym_ind,3,'Replace',false);
-% inj_f = datasample(fin_ind,3,'Replace',false);
-% 
-% isis(inj_s) = short_isi;
-% isis(inj_f) = short_isi;
+short_isi = 15;
+
+sym_ind = find(condMatrix==0);
+fin_ind = find(condMatrix==1);
+
+inj_s = datasample(sym_ind,3,'Replace',false);
+inj_f = datasample(fin_ind,3,'Replace',false);
+
+isis(inj_s) = short_isi;
+isis(inj_f) = short_isi;
+
+%Number of frames to wait before re-drawing
+waitframes = 1;
 
 
 %----------------------------------------------------------------------
@@ -332,13 +300,15 @@ for block = 1:numblocks
     
     for trial = 1:numtrials
         
-%         fwrite(udpobj,trial,'int8','async');  %trial start - sends trial number so there's a way to track that on braindata
+        fwrite(udpobj,trial,'int8','async');  %trial start - sends trial number so there's a way to track that on braindata
         timestamps(trial,1,block) = GetSecs;
         
         %Cue to determine whether a response has been made
         respToBeMade = true;
         whichButton = 0;
-
+  
+        
+        
         %Flip again to sync to vertical retrace at same time as drawing
         %fixation cross
         Screen('DrawLines', window, fixCoords,...
@@ -346,8 +316,10 @@ for block = 1:numblocks
         [timestamps(trial,2,block),StimulusOnsetTime(trial,1,block),...
             FlipTimestamp(trial,1,block),Missed(trial,1,block),...
             Beampos(trial,1,block)] = Screen('Flip', window);
-%         fwrite(udpobj,2,'int8','async');  %fixation onset
-
+        fwrite(udpobj,2,'int8','async');  %fixation onset
+        
+        
+        
         % Now we present the hold interval with fixation point minus one frame
         % because we presented the fixation point once already when getting a
         % time stamp
@@ -365,16 +337,16 @@ for block = 1:numblocks
         %stimulation timestamp in TMS data
         
         %present rule
-        if mod(block,2) == 1  %0==symbols 1==fingers
+        if condMatrix(trial,block) == 0  %0==symbols 1==fingers
             
             DrawFormattedText(window, print_evenodd{trial,block},...
                 'center', 'center', white);
             Screen('DrawTexture', window,...
-                Finger_Textures{fingerchooser(trial)}, [], dstRect, 0);
+                Symbol_Textures{symbolchooser{trial,block}(1)}, [], dstRect, 0);
             [timestamps(trial,4,block),StimulusOnsetTime(trial,2,block),...
                 FlipTimestamp(trial,2,block),Missed(trial,2,block),...
                 Beampos(trial,2,block)] = Screen('Flip', window);
-%             fwrite(udpobj,4,'int8','async');  %rule presentation
+            fwrite(udpobj,4,'int8','async');  %rule presentation
             
             spTimeFramescheck = 1;
             
@@ -383,13 +355,13 @@ for block = 1:numblocks
                 DrawFormattedText(window, print_evenodd{trial,block},...
                     'center', 'center', white);
                 Screen('DrawTexture', window,...
-                    Finger_Textures{fingerchooser(trial)}, [], dstRect, 0);
+                    Symbol_Textures{symbolchooser{trial,block}(1)}, [], dstRect, 0);
                 Screen('Flip', window);
                 
                 [keyIsDown,secs, keyCode] = KbCheck;
                 
                 if keyCode(spacebar)
-%                     fwrite(udpobj,5,'int8','async');  %rule response
+                    fwrite(udpobj,5,'int8','async');  %rule response
                     respToBeMade = false;
                     timestamps(trial,5,block) = GetSecs;
                     
@@ -406,15 +378,15 @@ for block = 1:numblocks
             end
             
         else
-
+            %fingers
             DrawFormattedText(window, print_evenodd{trial,block},...
                 'center', 'center', white);
             Screen('DrawTexture', window,...
-                Symbol_Textures{symbolchooser(trial)}, [], dstRect, 0);
+                Finger_Textures{fingerchooser{trial,block}(1)}, [], dstRect, 0);
             [timestamps(trial,4,block),StimulusOnsetTime(trial,2,block),...
                 FlipTimestamp(trial,2,block),Missed(trial,2,block),...
                 Beampos(trial,2,block)] = Screen('Flip', window);
-%             fwrite(udpobj,4,'int8','async');  %rule presentation
+            fwrite(udpobj,4,'int8','async');  %rule presentation
             
             spTimeFramescheck = 1;
             
@@ -423,13 +395,13 @@ for block = 1:numblocks
                 DrawFormattedText(window, print_evenodd{trial,block},...
                     'center', 'center', white);
                 Screen('DrawTexture', window,...
-                    Symbol_Textures{symbolchooser(trial)}, [], dstRect, 0);
+                    Finger_Textures{fingerchooser{trial,block}(1)}, [], dstRect, 0);
                 Screen('Flip', window);
                 
                 [keyIsDown,secs, keyCode] = KbCheck;
                 
                 if keyCode(spacebar)
-%                     fwrite(udpobj,5,'int8','async');  %rule response
+                    fwrite(udpobj,5,'int8','async');  %rule response
                     respToBeMade = false;
                     timestamps(trial,5,block) = GetSecs;
                     
@@ -458,7 +430,7 @@ for block = 1:numblocks
         [timestamps(trial,6,block),StimulusOnsetTime(trial,3,block),...
             FlipTimestamp(trial,3,block),Missed(trial,3,block),...
             Beampos(trial,3,block)] = Screen('Flip', window);
-%         fwrite(udpobj,6,'int8','async');  %delay fix
+        fwrite(udpobj,6,'int8','async');  %delay fix
         
         
         for frame = 1:isis(trial,block) - 1
@@ -487,7 +459,7 @@ for block = 1:numblocks
         [timestamps(trial,8,block),StimulusOnsetTime(trial,4,block),...
             FlipTimestamp(trial,4,block),Missed(trial,4,block),...
             Beampos(trial,4,block)] = Screen('Flip', window);
-%         fwrite(udpobj,8,'int8','async');  %stimulus presentation
+        fwrite(udpobj,8,'int8','async');  %stimulus presentation
         
         
         spTimeFramescheck = 1;
@@ -501,12 +473,12 @@ for block = 1:numblocks
                 sca;
                 return
             elseif keyCode(aKey)
-%                 fwrite(udpobj,9,'int8','async');  %stimulus response
+                fwrite(udpobj,9,'int8','async');  %stimulus response
                 subj_resp{trial} = 'L';
                 timestamps(trial,9,block) = secs;
                 respToBeMade = false;
             elseif keyCode(sKey)
-%                 fwrite(udpobj,9,'int8','async');  %stimulus response
+                fwrite(udpobj,9,'int8','async');  %stimulus response
                 subj_resp{trial} = 'R';
                 timestamps(trial,9,block) = secs;
                 respToBeMade = false;
@@ -530,7 +502,7 @@ for block = 1:numblocks
         [timestamps(trial,10,block),StimulusOnsetTime(trial,5,block),...
             FlipTimestamp(trial,5,block),Missed(trial,5,block),...
             Beampos(trial,5,block)] = Screen('Flip', window);
-%         fwrite(udpobj,10,'int8','async');  %ITI onset
+        fwrite(udpobj,10,'int8','async');  %ITI onset
         
         for frame = 1:1:itis(trial,block) - 1
             
@@ -541,7 +513,7 @@ for block = 1:numblocks
         
         disp(trial)
         
-%         fwrite(udpobj,11,'int8','async');  %trial end
+        fwrite(udpobj,11,'int8','async');  %trial end
         timestamps(trial,11,block) = GetSecs;  %relative to streamstart_time
         realtime(trial,block) = toc;  %relative to tic
  
@@ -556,7 +528,7 @@ KbStrokeWait;
 ShowCursor;
 sca;
 
-% fclose(udpobj);
+fclose(udpobj);
 
 clear udpobj
 
