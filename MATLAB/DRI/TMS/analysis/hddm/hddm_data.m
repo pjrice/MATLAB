@@ -47,10 +47,10 @@ csvwrite('C:\python\hddm\data\simple_hddm.csv',simple_hddm)
 old_data = csvread('Z:\Work\UW\projects\RR_TMS\data\andrea_data.csv');
 
 %make strings to denote conditions
-%inf/ins - X(0)/Y(1)
-%sym/fin - S(0)/F(1)
-%early/late/no stim - E(0)/L(1)/N(2)
-%PMd/Vertex stim - P(0)/V(1)
+%inf/ins - X(0, inf)/Y(1, instr)
+%sym/fin - S(0, sym)/F(1, fin)
+%early/late/no stim - E(0, early)/L(1, late )/N(2, no)
+%PMd/Vertex stim - P(0, PMd)/V(1, Vertex)
 
 for i = 1:length(old_data)
     
