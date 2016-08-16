@@ -24,6 +24,10 @@ blue = [0 0 1];
 indigo = [0.25 0 1];
 violet = [0.75 0 1];
 
+test1 = [0.98 1 0];  %yellowish
+test2 = [0 0.98 0];  %greenish
+test3 = [0 0 0.98];  %blueish
+
 %roy g biv
 
 %Open the screen
@@ -73,11 +77,13 @@ dstRect6 = CenterRectOnPointd(dstRect, xCenter*1.75, yCenter);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-x=0;
-y=0;
 
-normBR = Screen('TextBounds',window,'K');
-normBRcent = CenterRectOnPointd(normBR,xcenter,ycenter);
+C = Screen('TextBounds',window,'C');
+A = Screen('TextBounds',window,'A');
+T = Screen('TextBounds',window,'T');
+C_loc = CenterRectOnPointd(normBR,xCenter*0.75, yCenter);
+A_loc = CenterRectOnPointd(normBR,xCenter, yCenter);
+T_loc = CenterRectOnPointd(normBR,xCenter*1.25, yCenter);
 
 Screen('FillRect',window,black);
 Screen('FillRect',window,red,dstRect1);
@@ -87,7 +93,9 @@ Screen('FillRect',window,green,dstRectcent);
 Screen('FillRect',window,blue,dstRect4);
 Screen('FillRect',window,indigo,dstRect5);
 Screen('FillRect',window,violet,dstRect6);
-Screen('DrawText',window,'K',normBRcent(1),normBRcent(2),white)
+Screen('DrawText',window,'C',C_loc(1),C_loc(2),test1)
+Screen('DrawText',window,'A',A_loc(1),A_loc(2),test2)
+Screen('DrawText',window,'T',T_loc(1),T_loc(2),test3)
 Screen('Flip', window);
 KbStrokeWait;
 
