@@ -62,7 +62,7 @@ HideCursor
 % [s1, s2, s3] = size(A_img);
 
 %define the destination rectangle for the images
-dstRect = [0 0 250 250];
+dstRect = [0 0 screenXpixels/8 screenXpixels/8];
 dstRect1 = CenterRectOnPointd(dstRect, xCenter*0.25, yCenter);
 dstRect2 = CenterRectOnPointd(dstRect, xCenter*0.5, yCenter);
 dstRect3 = CenterRectOnPointd(dstRect, xCenter*0.75, yCenter);
