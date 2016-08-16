@@ -62,14 +62,26 @@ HideCursor
 % [s1, s2, s3] = size(A_img);
 
 %define the destination rectangle for the images
-dstRect = [0 0 100 100];
-dstRect = CenterRectOnPointd(dstRect, xCenter, yCenter*1.35);
+dstRect = [0 0 250 250];
+dstRect1 = CenterRectOnPointd(dstRect, xCenter*0.25, yCenter);
+dstRect2 = CenterRectOnPointd(dstRect, xCenter*0.5, yCenter);
+dstRect3 = CenterRectOnPointd(dstRect, xCenter*0.75, yCenter);
+dstRectcent = CenterRectOnPointd(dstRect, xCenter, yCenter);
+dstRect4 = CenterRectOnPointd(dstRect, xCenter*1.25, yCenter);
+dstRect5 = CenterRectOnPointd(dstRect, xCenter*1.5, yCenter);
+dstRect6 = CenterRectOnPointd(dstRect, xCenter*1.75, yCenter);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 Screen('FillRect',window,black);
-Screen('FillRect',window,blue,dstRect);
+Screen('FillRect',window,red,dstRect1);
+Screen('FillRect',window,orange,dstRect2);
+Screen('FillRect',window,yellow,dstRect3);
+Screen('FillRect',window,green,dstRectcent);
+Screen('FillRect',window,blue,dstRect4);
+Screen('FillRect',window,indigo,dstRect5);
+Screen('FillRect',window,violet,dstRect6);
 Screen('Flip', window);
 KbStrokeWait;
 
