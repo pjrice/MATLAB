@@ -76,21 +76,99 @@ for i = 1:length(I)
         
         good_pds(i) = point_distances{z}(I(i),J(i));
         
-        good_words{i,1} = wordlist{wordlen_idx{z}(I(i))};
-        good_words{i,2} = wordlist{wordlen_idx{z}(J(i))};
+        word_pairs{i,1} = wordlist{wordlen_idx{z}(I(i))};
+        word_pairs{i,2} = wordlist{wordlen_idx{z}(J(i))};
         
         
     else
         
         good_pds(i) = NaN;
         
-        good_words{i,1} = [];
-        good_words{i,2} = [];
+        word_pairs{i,1} = [];
+        word_pairs{i,2} = [];
         
     end
 end
 
-closest = good_words(find(good_pds==min(good_pds)),:)
+% closest = word_pairs(find(good_pds==min(good_pds)),:);
+
+%indexes actual words pairs out of a bunch of blanks
+qindex = find(cellfun(@(x) ~isempty(x), word_pairs(:,1)));
+
+%creates cell with no blanks
+good_word_pairs = word_pairs(qindex,:);
+
+%finds unique words in the good pairs
+good_words = unique(good_word_pairs);
+
+%finds every possible set of 3 from good_words
+good_word_sets = nchoosek(good_words,3);
+
+%already filtered so word pairs don't match word groups, but finding unique
+%words in good_word_pairs then finding every possible combo in
+%good_word_sets reintroduces this problem
+%have to filter sets here so that each set of 3 contains only one word from
+%each word group
+for i = 1:length(good_word_sets)
+    
+    %if the word groups of 2 of any of the 3 words in set match
+    if word_groups(strmatch(good_word_sets(i,1),wordlist))==word_groups(strmatch(good_word_sets(i,2),wordlist)) | ...
+            word_groups(strmatch(good_word_sets(i,1),wordlist))==word_groups(strmatch(good_word_sets(i,3),wordlist)) | ...
+            word_groups(strmatch(good_word_sets(i,2),wordlist))==word_groups(strmatch(good_word_sets(i,3),wordlist))
+        
+        bad_set_idx(i,1) = i;
+        
+    else
+        
+        bad_set_idx(i,1) = NaN;
+        
+    end
+end
+
+%find where bad_set_idx is nan; this makes index of good sets within
+%good_word_sets
+good_set_idx = find(isnan(bad_set_idx)); 
+
+%make a list of words of the chosen length to strmatch the good sets with
+wordsoflen = wordlist(wordlen_idx{1,z});
+
+%sums the pdist values of the 3 pairs of words within a set
+for i = 1:length(good_set_idx)
+    
+    %get an index of where the words are
+    for ii = 1:size(good_word_sets,2)
+        
+        word_idx(ii) = strmatch(good_word_sets(good_set_idx(i),ii),wordsoflen);
+        
+    end
+   
+    %sort into sensible [I,J] index list to reference point_distances
+    pdist_idx = sort(nchoosek(word_idx,2),2);
+    
+    pdist_sums(i) = sum([point_distances{1,z}(pdist_idx(1,1),pdist_idx(1,2)) ...
+        point_distances{1,z}(pdist_idx(2,1),pdist_idx(2,2)) ...
+        point_distances{1,z}(pdist_idx(3,1),pdist_idx(3,2))]);
+    
+    clear word_idx pdist_idx
+    
+end
+    
+
+pdist_sums = pdist_sums';
+
+%sort pdist_sums from smallest (closest set) to largest (furthest set)
+[sorted_pdsums, spds_idx] = sort(pdist_sums);
+
+for i = 1:10
+    
+    disp(good_word_sets(spds_idx(i),:))
+    disp(sorted_pdsums(i))
+    
+end
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %make searchable structure words -> word groups -> indiv. words -> values
