@@ -73,6 +73,11 @@ dstRect6 = CenterRectOnPointd(dstRect, xCenter*1.75, yCenter);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+x=0;
+y=0;
+
+normBR = Screen('TextBounds',window,'K');
+normBRcent = CenterRectOnPointd(normBR,xcenter,ycenter);
 
 Screen('FillRect',window,black);
 Screen('FillRect',window,red,dstRect1);
@@ -82,6 +87,7 @@ Screen('FillRect',window,green,dstRectcent);
 Screen('FillRect',window,blue,dstRect4);
 Screen('FillRect',window,indigo,dstRect5);
 Screen('FillRect',window,violet,dstRect6);
+Screen('DrawText',window,'K',normBRcent(1),normBRcent(2),white)
 Screen('Flip', window);
 KbStrokeWait;
 
