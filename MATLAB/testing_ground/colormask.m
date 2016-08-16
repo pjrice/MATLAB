@@ -16,17 +16,28 @@ screenNumber = max(Screen('Screens'));
 white = WhiteIndex(screenNumber);
 grey = white/2;
 black = BlackIndex(screenNumber);
-red = [1 0 0];
-orange = [1 0.35 0];
-yellow = [1 1 0];
-green = [0 1 0];
-blue = [0 0 1];
-indigo = [0.25 0 1];
-violet = [0.75 0 1];
 
-test1 = [0.98 1 0];  %yellowish
-test2 = [0 0.98 0];  %greenish
-test3 = [0 0 0.98];  %blueish
+red = [1 0 0];
+red1 = [0.98 0 0];
+
+orange = [1 0.35 0];
+orange1 = [0.98 0.35 0];
+
+yellow = [1 1 0];
+yellow1 = [0.98 1 0];  %yellowish
+
+green = [0 1 0];
+green1 = [0 0.98 0];  %greenish
+
+blue = [0 0 1];
+blue1 = [0 0 0.98];  %blueish
+
+indigo = [0.25 0 1];
+indigo1 = [0.25 0 0.98];
+
+violet = [0.75 0 1];
+violet1 = [0.75 0 0.98];
+
 
 %roy g biv
 
@@ -78,12 +89,15 @@ dstRect6 = CenterRectOnPointd(dstRect, xCenter*1.75, yCenter);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-C = Screen('TextBounds',window,'C');
 A = Screen('TextBounds',window,'A');
-T = Screen('TextBounds',window,'T');
-C_loc = CenterRectOnPointd(normBR,xCenter*0.75, yCenter);
-A_loc = CenterRectOnPointd(normBR,xCenter, yCenter);
-T_loc = CenterRectOnPointd(normBR,xCenter*1.25, yCenter);
+
+loc1 = CenterRectOnPointd(A,xCenter*0.25, yCenter);
+loc2 = CenterRectOnPointd(A,xCenter*0.5, yCenter);
+loc3 = CenterRectOnPointd(A,xCenter*0.75, yCenter);
+loc4 = CenterRectOnPointd(A,xCenter, yCenter);
+loc5 = CenterRectOnPointd(A,xCenter*1.25, yCenter);
+loc6 = CenterRectOnPointd(A,xCenter*1.5, yCenter);
+loc7 = CenterRectOnPointd(A,xCenter*1.75, yCenter);
 
 Screen('FillRect',window,black);
 Screen('FillRect',window,red,dstRect1);
@@ -93,43 +107,40 @@ Screen('FillRect',window,green,dstRectcent);
 Screen('FillRect',window,blue,dstRect4);
 Screen('FillRect',window,indigo,dstRect5);
 Screen('FillRect',window,violet,dstRect6);
-Screen('DrawText',window,'C',C_loc(1),C_loc(2),test1)
-Screen('DrawText',window,'A',A_loc(1),A_loc(2),test2)
-Screen('DrawText',window,'T',T_loc(1),T_loc(2),test3)
+Screen('Flip', window);
+
+pause(1)
+
+Screen('FillRect',window,black);
+Screen('FillRect',window,red,dstRect1);
+Screen('FillRect',window,orange,dstRect2);
+Screen('FillRect',window,yellow,dstRect3);
+Screen('FillRect',window,green,dstRectcent);
+Screen('FillRect',window,blue,dstRect4);
+Screen('FillRect',window,indigo,dstRect5);
+Screen('FillRect',window,violet,dstRect6);
+Screen('DrawText',window,'A',loc1(1),loc1(2),white);
+Screen('DrawText',window,'B',loc2(1),loc2(2),white);
+Screen('DrawText',window,'C',loc3(1),loc3(2),white);
+Screen('DrawText',window,'D',loc4(1),loc4(2),white);
+Screen('DrawText',window,'E',loc5(1),loc5(2),white);
+Screen('DrawText',window,'F',loc6(1),loc6(2),white);
+Screen('DrawText',window,'G',loc7(1),loc7(2),white);
 Screen('Flip', window);
 KbStrokeWait;
 
-% Screen('FillRect',window,white);
-% Screen('Flip', window);
-% KbStrokeWait;
-% 
-% Screen('FillRect',window,blue);
-% Screen('Flip', window);
-% KbStrokeWait;
-% 
-% Screen('FillRect',window,test1);
-% Screen('Flip', window);
-% KbStrokeWait;
-% 
-% Screen('FillRect',window,test2);
-% Screen('Flip', window);
-% KbStrokeWait;
-% 
-% Screen('FillRect',window,test3);
-% Screen('Flip', window);
-% KbStrokeWait;
-% 
-% Screen('FillRect',window,test4);
-% Screen('Flip', window);
-% KbStrokeWait;
-% 
-% Screen('FillRect',window,test5);
-% Screen('Flip', window);
-% KbStrokeWait;
-% 
-% Screen('FillRect',window,test6);
-% Screen('Flip', window);
-% KbStrokeWait;
+Screen('FillRect',window,black);
+Screen('FillRect',window,red,dstRect1);
+Screen('FillRect',window,orange,dstRect2);
+Screen('FillRect',window,yellow,dstRect3);
+Screen('FillRect',window,green,dstRectcent);
+Screen('FillRect',window,blue,dstRect4);
+Screen('FillRect',window,indigo,dstRect5);
+Screen('FillRect',window,violet,dstRect6);
+Screen('Flip', window);
+
+pause(1)
+
 
 ShowCursor;
 sca;
