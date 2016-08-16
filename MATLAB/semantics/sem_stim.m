@@ -161,7 +161,7 @@ pdist_sums = pdist_sums';
 
 for i = 1:10
     
-    disp(good_word_sets(spds_idx(i),:))
+    disp(good_word_sets(good_set_idx(spds_idx(i)),:))
     disp(sorted_pdsums(i))
     
 end
