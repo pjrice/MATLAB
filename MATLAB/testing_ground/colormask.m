@@ -71,6 +71,7 @@ elseif rand_cloc=='n'
     color_mat = cat(2,colors(1).red',colors(1).orange',colors(1).yellow',...
         colors(1).green',colors(1).blue',colors(1).indigo',colors(1).violet');
     
+    cm_idx = repmat([1 2 3 4 5 6 7],numtrials,1);
     color_mats = cell(numtrials,1);
     color_mats(:) = {color_mat};
     
@@ -141,22 +142,24 @@ loc7 = CenterRectOnPointd(A,xCenter*1.75, yCenter);
 %while still maintaining ability to randomize colors referenced from
 %structure colors
 
-for trial = 1:numtrials
+% for trial = 1:numtrials
+% 
+%     Screen('FillRect',window,color_mats{trial},rect_mat);
+% %     Screen('FillRect',window,whites,rect_mat);
+%     Screen('DrawText',window,'A',loc1(1),loc1(2),colors(2).(cvars{cm_idx(trial,1)}));
+%     Screen('DrawText',window,'B',loc2(1),loc2(2),colors(2).(cvars{cm_idx(trial,2)}));
+%     Screen('DrawText',window,'C',loc3(1),loc3(2),colors(2).(cvars{cm_idx(trial,3)}));
+%     Screen('DrawText',window,'D',loc4(1),loc4(2),colors(2).(cvars{cm_idx(trial,4)}));
+%     Screen('DrawText',window,'E',loc5(1),loc5(2),colors(2).(cvars{cm_idx(trial,5)}));
+%     Screen('DrawText',window,'F',loc6(1),loc6(2),colors(2).(cvars{cm_idx(trial,6)}));
+%     Screen('DrawText',window,'G',loc7(1),loc7(2),colors(2).(cvars{cm_idx(trial,7)}));
+%     Screen('Flip',window);
+%     KbStrokeWait;
+% 
+% end
 
-    Screen('FillRect',window,color_mats{trial},rect_mat);
-%     Screen('FillRect',window,whites,rect_mat);
-    Screen('DrawText',window,'A',loc1(1),loc1(2),colors(2).(cvars{cm_idx(trial,1)}));
-    Screen('DrawText',window,'B',loc2(1),loc2(2),colors(2).(cvars{cm_idx(trial,2)}));
-    Screen('DrawText',window,'C',loc3(1),loc3(2),colors(2).(cvars{cm_idx(trial,3)}));
-    Screen('DrawText',window,'D',loc4(1),loc4(2),colors(2).(cvars{cm_idx(trial,4)}));
-    Screen('DrawText',window,'E',loc5(1),loc5(2),colors(2).(cvars{cm_idx(trial,5)}));
-    Screen('DrawText',window,'F',loc6(1),loc6(2),colors(2).(cvars{cm_idx(trial,6)}));
-    Screen('DrawText',window,'G',loc7(1),loc7(2),colors(2).(cvars{cm_idx(trial,7)}));
-    Screen('Flip',window);
-    KbStrokeWait;
-
-end
-
+Screen('FillRect',window,colors(1).blue)
+KbStrokeWait;
 
 
 
