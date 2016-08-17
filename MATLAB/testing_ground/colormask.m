@@ -33,6 +33,8 @@ colors.blue = [0 0 1];
 colors.indigo = [0.25 0 1];
 colors.violet = [0.75 0 1];
 
+blue = [0 0 1];
+
 %slightly altered to print priming letters
 colors(2).red = [0.95 0 0];
 colors(2).orange = [0.95 0.35 0];
