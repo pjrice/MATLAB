@@ -292,19 +292,20 @@ for trial = 1:numtrials
             return
         elseif keyCode(aKey)
             respToBeMade = false;
+            respkey{trial,1} = 'left';
+            respword{trial,1} = printleft{trial,1};
         elseif keyCode(sKey)
             respToBeMade = false;
+            respkey{trial,1} = 'right';
+            respword{trial,1} = printright{trial,1};
         end 
     end
 
 end
 
-
-
-
-
-
 ShowCursor;
 sca;
 
+success = sum(strcmp(stim_words,respword))/length(respword);
+disp(success)
 
