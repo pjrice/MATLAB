@@ -159,6 +159,7 @@ loc7 = CenterRectOnPointd(A,xCenter*1.75, yCenter);
 % end
 
 Screen('FillRect',window,colors(1).blue)
+Screen('Flip',window);
 KbStrokeWait;
 
 
