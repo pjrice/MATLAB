@@ -31,9 +31,9 @@ RZ_UDP_PORT = 22022;
 pre_header = '55AA';
 
 % UDP command constants (Cmd)
-CMD_SEND_DATA        = '00';
-CMD_GET_VERSION      = '01';
-CMD_SET_REMOTE_IP    = '02';
+CMD_SEND_DATA = '00';
+CMD_GET_VERSION = '01';
+CMD_SET_REMOTE_IP = '02';
 CMD_FORGET_REMOTE_IP = '03';
 
 %the number of 4 byte packets we expect to send (equal to the number of

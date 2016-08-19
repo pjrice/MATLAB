@@ -40,14 +40,14 @@ blue = [0 0 1];
 %slightly altered to print priming letters
 
 if easy=='n'
-    colors(2).red = [0.97 0 0];
-    colors(2).orange = [0.97 0.35 0];
-    colors(2).yellow = [0.97 1 0];
-    colors(2).green = [0 0.97 0];
-    colors(2).blue = [0 0 0.97];
-    colors(2).indigo = [0.25 0 0.97];
-    colors(2).violet = [0.75 0 0.97];
-    ptime = 0.1;
+    colors(2).red = [0.99 0 0];
+    colors(2).orange = [0.99 0.35 0];
+    colors(2).yellow = [0.99 1 0];
+    colors(2).green = [0 0.99 0];
+    colors(2).blue = [0 0 0.99];
+    colors(2).indigo = [0.25 0 0.99];
+    colors(2).violet = [0.75 0 0.99];
+    ptime = 0.06;
 else
     colors(2).red = [0.5 0 0];
     colors(2).orange = [0.5 0.35 0];
