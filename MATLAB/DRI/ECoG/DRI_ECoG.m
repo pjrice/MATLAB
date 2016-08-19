@@ -12,8 +12,7 @@ filename = strcat(filename,filename_append);
 imgbasepath = 'Z:\Work\UW\projects\RR_TMS\RP_images\';
 
 %which hand are we working with?
-% hand = input('Which hand are we working with? 0 for left, 1 for right: ');
-%always work with right hand
+hand = input('Which hand are we working with? 0 for left, 1 for right: ');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
@@ -94,11 +93,23 @@ RM_img = imread(RM_imgloc);
 % Make the image into a texture
 Symbol_Textures{1} = Screen('MakeTexture', window, A_img);
 Symbol_Textures{2} = Screen('MakeTexture', window, B_img);
-Finger_Textures{1} = Screen('MakeTexture', window, RI_img);
-Finger_Textures{2} = Screen('MakeTexture', window, RM_img);
-Finger_Textures{3} = Screen('MakeTexture', window, LI_img);
-Finger_Textures{4} = Screen('MakeTexture', window, LM_img);
 
+if hand==1
+    
+    Finger_Textures{1} = Screen('MakeTexture', window, RI_img);
+    Finger_Textures{2} = Screen('MakeTexture', window, RM_img);
+    
+elseif hand==0
+    
+    Finger_Textures{1} = Screen('MakeTexture', window, LI_img);
+    Finger_Textures{2} = Screen('MakeTexture', window, LM_img);
+    
+else
+    
+    error('Hand variable set incorrectly!');
+    
+end
+    
 % Get the size of the image (all should be same size)
 [s1, s2, s3] = size(A_img);
 
@@ -120,8 +131,8 @@ end
 %                       Trial information
 %----------------------------------------------------------------------
 
-numtrials = 8;
-% numtrials = 160;
+% numtrials = 8;
+numtrials = 160;
 numblocks = 2;
 
 fingers{1} = 'INDEX';
@@ -132,8 +143,8 @@ symbols = ['A' 'B'];
 
 %establish base vectors to repmat into proper size
 %possible stimulus values
-% stimchoices = repmat([2:9]',4,1);
-stimchoices = repmat([2:9]',1,1);
+stimchoices = repmat([2:9]',4,1);
+% stimchoices = repmat([2:9]',1,1);
 
 %even/odd presentation
   %1==Even
@@ -245,9 +256,24 @@ isis = randi([15 120],numtrials,numblocks);
 keychoices = ['A' 'S'];
 
 escapeKey = KbName('ESCAPE');
-aKey = KbName('LeftArrow');  %"aKey" is actually left arrow
-sKey = KbName( 'RightArrow');  %"sKey" is actually right arrow
-spacebar = KbName('space');
+
+if hand==1
+    
+    aKey = KbName('LeftArrow');  %"aKey" is actually left arrow
+    sKey = KbName( 'RightArrow');  %"sKey" is actually right arrow
+    spacebar = KbName('space');
+    
+elseif hand==0
+    
+    aKey = KbName('a');  %"aKey" is actually left arrow
+    sKey = KbName( 'd');  %"sKey" is actually right arrow
+    spacebar = KbName('Return');
+    
+else
+    
+    error('Hand variable set incorrectly!');
+    
+end
 
 %----------------------------------------------------------------------
 %                     Make a response matrix
