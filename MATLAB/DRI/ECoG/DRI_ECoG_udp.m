@@ -17,16 +17,58 @@ imgbasepath = 'Z:\Work\UW\projects\RR_TMS\RP_images\';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-%establish UDP link to TDT RZ box in order to mark timestamps
-% udpobj = udp('127.0.0.1', 4012); %edit host and port after it's set up
+% enter RZ's IP address or NetBIOS name here:
+RZ5D_IP = '10.1.0.100';
 
-%default output buffer size is 512 bytes, make sure the I/O buffers are large
-%enough to handle the data being sent/received
-%must set before object is open
-% udpobj.OutputBufferSize = 8000; %in bytes
+% Important: the RZ UDP interface port is fixed at 22022
+RZ_UDP_PORT = 22022;
 
-%open udp object
-% fopen(udpobj)
+%UDP packet header format:
+%  |0x55|0xAA|Cmd|Num|
+%4 bytes total
+%Num==# of 4 byte data packets expected following header
+
+% every RZ UDP command starts with this
+pre_header = '55AA';
+
+% UDP command constants (Cmd)
+CMD_SEND_DATA        = '00';
+CMD_GET_VERSION      = '01';
+CMD_SET_REMOTE_IP    = '02';
+CMD_FORGET_REMOTE_IP = '03';
+
+%the number of 4 byte packets we expect to send (equal to the number of
+%channels we're sending?)
+numpackets = 1;
+
+% configure the header to set the target for receiving packets from the
+% RZ. Notice that it includes the header information followed by the 
+% command 2 (set remote IP) and hex '00' (no data packets for header).
+set_rIP = hex2dec([pre_header, CMD_SET_REMOTE_IP, '00']);
+
+%configure the header to send data to the RZ
+sd_header = hex2dec([pre_header,CMD_SEND_DATA, dec2hex(numpackets)]);
+
+%InputBufferSize in bytes
+try
+    u = udp(RZ5D_IP, RZ_UDP_PORT, 'InputBufferSize', 1024);
+catch
+    error('problem creating UDP socket')
+end
+
+% bind preliminary IP address and port number to the PC
+fopen(u);
+get(u, 'Status')
+u.DatagramTerminateMode = 'on';
+
+% Sends the set_rIP packet to the UDP interface, setting the remote IP
+% address of the UDP interface to the host PC
+disp('writing header')
+fwrite(u, set_rIP, 'int32');
+
+%create the data to send (if necessary)
+udpdata = [1:numtrials];
+udpdata = int32(data);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Setup PTB with some default values
@@ -120,8 +162,8 @@ end
 %                       Trial information
 %----------------------------------------------------------------------
 
-numtrials = 8;
-% numtrials = 160;
+% numtrials = 8;
+numtrials = 160;
 numblocks = 2;
 
 fingers{1} = 'INDEX';
@@ -132,8 +174,8 @@ symbols = ['A' 'B'];
 
 %establish base vectors to repmat into proper size
 %possible stimulus values
-% stimchoices = repmat([2:9]',4,1);
-stimchoices = repmat([2:9]',1,1);
+% stimchoices = repmat([2:9]',1,1);
+stimchoices = repmat([2:9]',4,1);
 
 %even/odd presentation
   %1==Even
@@ -323,8 +365,16 @@ realtime = zeros(numtrials,numblocks);
 adblData_mat = cell(numtrials,numblocks);
 subj_resp = cell(numtrials,numblocks);
 
-%present black screen until subject is ready; press any key to continue
-Screen('FillRect',window,black);
+DrawFormattedText(window, 'Please wait',...
+    'center', 'center', white);
+Screen('Flip', window);
+
+RZ_start = fread(u,1,'single');
+TDT_recording_start = GetSecs;
+    
+%present until subject is ready; press any key to continue
+DrawFormattedText(window, 'Press spacebar to begin',...
+    'center', 'center', white);
 Screen('Flip', window);
 KbStrokeWait;
 
@@ -335,7 +385,7 @@ for block = 1:numblocks
     
     for trial = 1:numtrials
         
-%         fwrite(udpobj,trial,'int8','async');  %trial start - sends trial number so there's a way to track that on braindata
+%         fwrite(u,[sd_header, udpdata(trial)],'int32','async');  %trial start - sends trial number so there's a way to track that on braindata
         timestamps(trial,1,block) = GetSecs;
         
         %Cue to determine whether a response has been made
@@ -349,7 +399,8 @@ for block = 1:numblocks
         [timestamps(trial,2,block),StimulusOnsetTime(trial,1,block),...
             FlipTimestamp(trial,1,block),Missed(trial,1,block),...
             Beampos(trial,1,block)] = Screen('Flip', window);
-%         fwrite(udpobj,2,'int8','async');  %fixation onset
+        evt_data = int32(timestamps(trial,2,block));
+%         fwrite(u,[sd_header, evt_data],'int32','async');  %fixation onset
 
         % Now we present the hold interval with fixation point minus one frame
         % because we presented the fixation point once already when getting a
@@ -377,7 +428,8 @@ for block = 1:numblocks
             [timestamps(trial,4,block),StimulusOnsetTime(trial,2,block),...
                 FlipTimestamp(trial,2,block),Missed(trial,2,block),...
                 Beampos(trial,2,block)] = Screen('Flip', window);
-%             fwrite(udpobj,4,'int8','async');  %rule presentation
+            evt_data = int32(timestamps(trial,4,block));
+%             fwrite(u,[sd_header, evt_data],'int32','async');  %rule presentation
             
             spTimeFramescheck = 1;
             
@@ -392,9 +444,10 @@ for block = 1:numblocks
                 [keyIsDown,secs, keyCode] = KbCheck;
                 
                 if keyCode(spacebar)
-%                     fwrite(udpobj,5,'int8','async');  %rule response
-                    respToBeMade = false;
                     timestamps(trial,5,block) = GetSecs;
+                    evt_data = int32(timestamps(trial,5,block));
+%                     fwrite(u,[sd_header, evt_data],'int32','async');  %rule response
+                    respToBeMade = false;
                     
                 elseif keyCode(escapeKey)
                     
@@ -417,7 +470,8 @@ for block = 1:numblocks
             [timestamps(trial,4,block),StimulusOnsetTime(trial,2,block),...
                 FlipTimestamp(trial,2,block),Missed(trial,2,block),...
                 Beampos(trial,2,block)] = Screen('Flip', window);
-%             fwrite(udpobj,4,'int8','async');  %rule presentation
+            evt_data = int32(timestamps(trial,4,block));
+%             fwrite(u,[sd_header, evt_data],'int32','async');  %rule presentation
             
             spTimeFramescheck = 1;
             
@@ -432,9 +486,10 @@ for block = 1:numblocks
                 [keyIsDown,secs, keyCode] = KbCheck;
                 
                 if keyCode(spacebar)
-%                     fwrite(udpobj,5,'int8','async');  %rule response
-                    respToBeMade = false;
                     timestamps(trial,5,block) = GetSecs;
+                    evt_data = int32(timestamps(trial,5,block));
+%                     fwrite(u,[sd_header, evt_data],'int32','async');  %rule response
+                    respToBeMade = false;
                     
                 elseif keyCode(escapeKey)
                     
@@ -461,7 +516,8 @@ for block = 1:numblocks
         [timestamps(trial,6,block),StimulusOnsetTime(trial,3,block),...
             FlipTimestamp(trial,3,block),Missed(trial,3,block),...
             Beampos(trial,3,block)] = Screen('Flip', window);
-%         fwrite(udpobj,6,'int8','async');  %delay fix
+        evt_data = int32(timestamps(trial,6,block));
+%         fwrite(u,[sd_header, evt_data],'int32','async');  %delay fix
         
         
         for frame = 1:isis(trial,block) - 1
@@ -490,7 +546,8 @@ for block = 1:numblocks
         [timestamps(trial,8,block),StimulusOnsetTime(trial,4,block),...
             FlipTimestamp(trial,4,block),Missed(trial,4,block),...
             Beampos(trial,4,block)] = Screen('Flip', window);
-%         fwrite(udpobj,8,'int8','async');  %stimulus presentation
+        evt_data = int32(timestamps(trial,8,block));
+%         fwrite(u,[sd_header, evt_data],'int32','async');  %stimulus presentation
         
         
         spTimeFramescheck = 1;
@@ -504,14 +561,19 @@ for block = 1:numblocks
                 sca;
                 return
             elseif keyCode(aKey)
-%                 fwrite(udpobj,9,'int8','async');  %stimulus response
                 subj_resp{trial,block} = 'L';
                 timestamps(trial,9,block) = secs;
+                evt_data = int32(timestamps(trial,9,block));
+%                 fwrite(u,[sd_header, evt_data],'int32','async');  %stimulus response
+                
                 respToBeMade = false;
+                
             elseif keyCode(sKey)
-%                 fwrite(udpobj,9,'int8','async');  %stimulus response
                 subj_resp{trial,block} = 'R';
                 timestamps(trial,9,block) = secs;
+                evt_data = int32(timestamps(trial,9,block));
+%                 fwrite(u,[sd_header, evt_data],'int32','async');  %stimulus response
+
                 respToBeMade = false;
             end
             
@@ -533,7 +595,8 @@ for block = 1:numblocks
         [timestamps(trial,10,block),StimulusOnsetTime(trial,5,block),...
             FlipTimestamp(trial,5,block),Missed(trial,5,block),...
             Beampos(trial,5,block)] = Screen('Flip', window);
-%         fwrite(udpobj,10,'int8','async');  %ITI onset
+        evt_data = int32(timestamps(trial,10,block));
+%         fwrite(u,[sd_header, evt_data],'int32','async');  %ITI onset
         
         for frame = 1:1:itis(trial,block) - 1
             
@@ -544,8 +607,10 @@ for block = 1:numblocks
         
         disp(trial)
         
-%         fwrite(udpobj,11,'int8','async');  %trial end
+
         timestamps(trial,11,block) = GetSecs;  %relative to streamstart_time
+        evt_data = int32(timestamps(trial,11,block));
+%         fwrite(u,[sd_header, evt_data],'int32','async');  %trial end
         realtime(trial,block) = toc;  %relative to tic
  
     end    
@@ -559,8 +624,9 @@ KbStrokeWait;
 ShowCursor;
 sca;
 
-% fclose(udpobj);
-
-clear udpobj
+%clean up UDP connection
+fclose(u);
+delete(u);
+clear u
 
 save(filename)
