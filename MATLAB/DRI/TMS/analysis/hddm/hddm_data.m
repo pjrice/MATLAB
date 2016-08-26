@@ -190,8 +190,29 @@ for i = 2:length(full_hddm)
 end
 fclose(fid);
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%find convert condition column to only reflect inf/inst trials
+for i = 1:length(data)
+    
+    if data{i,2}(2)=='X'
+        
+        data{i,2} = 'X';
+        
+    else
+        
+        data{i,2} = 'Y';
+        
+    end
+end
 
+fid = fopen('Z:\Work\UW\projects\RR_TMS\hddm\data\infins_hddm.csv', 'w');
+fprintf(fid,'%s,%s,%s,%s,%s\n',data{1,:});
+
+for i = 2:length(data)
+    fprintf(fid,'%u,%s,%f,%u,%f\n',data{i,:});
+end
+fclose(fid);
 
 
 
