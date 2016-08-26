@@ -192,7 +192,7 @@ fclose(fid);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%find convert condition column to only reflect inf/inst trials
+%convert condition column to only reflect inf/inst trials
 for i = 1:length(data)
     
     if data{i,2}(2)=='X'
@@ -214,9 +214,48 @@ for i = 2:length(data)
 end
 fclose(fid);
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%convert condition column to only reflect inf/inst and S/F trials; create
+%new "tms" column with E/L/N and P/V info
+
+%copy data into this
+tempdata = cell(0);
+
+cellsize = size(tempdata);
+cellsize(2) = cellsize(2)+1;
+data = cell(cellsize);
+
+data(:,1) = tempdata(:,1);
+data(:,3) = tempdata(:,3);
+data(:,4) = tempdata(:,4);
+data(:,5) = tempdata(:,5);
+
+for i = 1:length(tempdata)
+    
+    data{i,2} = tempdata{i,2}(2:3);
+    data{i,6} = tempdata{i,2}(4:5);
+    
+end
 
 
 
+n = 1;
+data(n+1:end+1,:) = data(n:end,:);
+data{n,1} = 'subj_idx';
+data{n,2} = 'stim';
+data{n,3} = 'rt';
+data{n,4} = 'response';
+data{n,5} = 'rulert';
+data{n,6} = 'tms';
+
+fid = fopen('Z:\Work\UW\projects\RR_TMS\hddm\data\fullsplit_hddm.csv', 'w');
+fprintf(fid,'%s,%s,%s,%s,%s,%s\n',data{1,:});
+
+for i = 2:length(data)
+    fprintf(fid,'%u,%s,%f,%u,%f,%s\n',data{i,:});
+end
+fclose(fid);
 
 
 
