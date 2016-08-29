@@ -223,7 +223,7 @@ fclose(fid);
 tempdata = cell(0);
 
 cellsize = size(tempdata);
-cellsize(2) = cellsize(2)+1;
+cellsize(2) = cellsize(2)+3;
 data = cell(cellsize);
 
 data(:,1) = tempdata(:,1);
@@ -231,11 +231,33 @@ data(:,3) = tempdata(:,3);
 data(:,4) = tempdata(:,4);
 data(:,5) = tempdata(:,5);
 
+% for i = 1:length(tempdata)
+%     
+%     data{i,2} = tempdata{i,2}(2:3);
+%     data{i,6} = tempdata{i,2}(4:5);
+%     
+% end
+
 for i = 1:length(tempdata)
     
-    data{i,2} = tempdata{i,2}(2:3);
-    data{i,6} = tempdata{i,2}(4:5);
+    data{i,2} = tempdata{i,2}(3);
+    data{i,6} = tempdata{i,2}(2);
     
+    if tempdata{i,2}(4)=='E'
+        
+        data{i,7} = tempdata{i,2}(5);
+        data{i,8} = 'N';
+        
+    elseif tempdata{i,2}(4)=='L'
+        
+        data{i,7} = 'N';
+        data{i,8} = tempdata{i,2}(5);
+        
+    elseif tempdata{i,2}(4)=='N'
+        data{i,7} = 'N';
+        data{i,8} = 'N';
+        
+    end
 end
 
 
@@ -247,18 +269,25 @@ data{n,2} = 'stim';
 data{n,3} = 'rt';
 data{n,4} = 'response';
 data{n,5} = 'rulert';
-data{n,6} = 'tms';
+data{n,6} = 'inst';
+data{n,7} = 'ES';
+data{n,8} = 'LS';
 
-fid = fopen('Z:\Work\UW\projects\RR_TMS\hddm\data\fullsplit_hddm.csv', 'w');
-fprintf(fid,'%s,%s,%s,%s,%s,%s\n',data{1,:});
+fid = fopen('C:\Users\ausma_000\Desktop\RR_Project\python\data\fullallsplit_hddm.csv', 'w');
+fprintf(fid,'%s,%s,%s,%s,%s,%s,%s,%s\n',data{1,:});
 
 for i = 2:length(data)
-    fprintf(fid,'%u,%s,%f,%u,%f,%s\n',data{i,:});
+    fprintf(fid,'%u,%s,%f,%u,%f,%s,%s,%s\n',data{i,:});
 end
 fclose(fid);
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+tempdata = cell(0);
 
+cellsize = size(tempdata);
+cellsize(2) = cellsize(2)+1;
+data = cell(cellsize);
 
 
 
