@@ -80,14 +80,6 @@ Screen('BlendFunction',window,'GL_SRC_ALPHA','GL_ONE_MINUS_SRC_ALPHA');
 
 HideCursor
 
-% %load images
-% castle_imgloc = strcat(imgbasepath,'castle.png');
-% hammer_imgloc = strcat(imgbasepath,'hammer.png');
-% house_imgloc = strcat(imgbasepath,'house.png');
-% igloo_imgloc = strcat(imgbasepath,'igloo.png');
-% RI_imgloc = strcat(imgbasepath,'pliers.png');
-% RM_imgloc = strcat(imgbasepath,'saw.png');
-
 %load images
 stimuli.dwellings.castle.imgloc = strcat(imgbasepath,'castle.png');
 stimuli.dwellings.house.imgloc = strcat(imgbasepath,'house.png');
@@ -123,24 +115,6 @@ stimuli.tools.screwdriver.texture = Screen('MakeTexture', window, stimuli.tools.
 %define the destination rectangle for the images
 dstRect = [0 0 s1 s2];
 dstRect = CenterRectOnPointd(dstRect, xCenter, yCenter);
-% 
-% escapeKey = KbName('ESCAPE');
-% 
-% Screen('DrawTexture', window, stimuli.dwellings.castle.texture, [], dstRect, 0);
-% Screen('Flip', window);
-% 
-% respToBeMade = 1;
-% 
-% while respToBeMade == true
-%             
-%             [keyIsDown,secs, keyCode] = KbCheck;
-%             if keyCode(escapeKey)
-%                 ShowCursor;
-%                 sca;
-%                 return
-%                 
-%             end
-% end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -213,27 +187,8 @@ keychoices = ['A' 'L'];
 
 escapeKey = KbName('ESCAPE');
 
-aKey = KbName('a');
-lKey = KbName('l');
-
-
-% if hand==1
-%     
-%     aKey = KbName('LeftArrow');  %"aKey" is actually left arrow
-%     sKey = KbName( 'RightArrow');  %"sKey" is actually right arrow
-%     spacebar = KbName('space');
-%     
-% elseif hand==0
-%     
-%     aKey = KbName('a');  %"aKey" is actually left arrow
-%     sKey = KbName( 'd');  %"sKey" is actually right arrow
-%     spacebar = KbName('Return');
-%     
-% else
-%     
-%     error('Hand variable set incorrectly!');
-%     
-% end
+aKey = KbName('a');  %assigned to "dwelling" response
+lKey = KbName('l');  %assigned to "tool" response
 
 %----------------------------------------------------------------------
 %                       Fixation Cross
