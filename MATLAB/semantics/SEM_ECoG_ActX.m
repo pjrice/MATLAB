@@ -116,6 +116,14 @@ stimuli.tools.screwdriver.texture = Screen('MakeTexture', window, stimuli.tools.
 dstRect = [0 0 s1 s2];
 dstRect = CenterRectOnPointd(dstRect, xCenter, yCenter);
 
+% Here we check if the image is too big to fit on the screen and abort if
+% it is
+if s1 > screenYpixels || s2 > screenYpixels
+    disp('ERROR! Image is too big to fit on the screen');
+    sca;
+    return;
+end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %----------------------------------------------------------------------
