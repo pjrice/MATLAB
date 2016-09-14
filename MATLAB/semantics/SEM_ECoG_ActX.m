@@ -8,8 +8,8 @@ filename = strcat(filename,filename_append);
 
 %base path for images?
 % imgbasepath = 'C:\temp_patrick\RP_images\';
-% imgbasepath = 'Z:\data\DRI\RP_images\';
 imgbasepath = 'Z:\Work\UW\projects\semantics\stimuli\';
+% imgbasepath = 'Z:\Work\UW\projects\semantics\stimuli\';
 
 %which hand are we working with?
 % hand = input('Which hand are we working with? 0 for left, 1 for right: ');

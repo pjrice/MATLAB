@@ -1,5 +1,7 @@
 %maze paradigm for Gire lab
 
+clear
+
 % %filename?
 % filename = 'C:\temp_patrick\data\';
 % filename_append = input('Filename? ','s');
@@ -83,15 +85,24 @@ HideCursor
 arrows.left.imgloc = strcat(imgbasepath,'left.png');
 arrows.up.imgloc = strcat(imgbasepath,'up.png');
 arrows.right.imgloc = strcat(imgbasepath,'right.png');
+arrows.rleft.imgloc = strcat(imgbasepath,'left_red.png');
+arrows.rup.imgloc = strcat(imgbasepath,'up_red.png');
+arrows.rright.imgloc = strcat(imgbasepath,'right_red.png');
 
 arrows.left.img = imread(arrows.left.imgloc);
 arrows.up.img = imread(arrows.up.imgloc);
 arrows.right.img = imread(arrows.right.imgloc);
+arrows.rleft.img = imread(arrows.rleft.imgloc);
+arrows.rup.img = imread(arrows.rup.imgloc);
+arrows.rright.img = imread(arrows.rright.imgloc);
 
 %make images into textures
 arrows.left.texture = Screen('MakeTexture',window,arrows.left.img);
 arrows.up.texture = Screen('MakeTexture',window,arrows.up.img);
 arrows.right.texture = Screen('MakeTexture',window,arrows.right.img);
+arrows.rleft.texture = Screen('MakeTexture',window,arrows.rleft.img);
+arrows.rup.texture = Screen('MakeTexture',window,arrows.rup.img);
+arrows.rright.texture = Screen('MakeTexture',window,arrows.rright.img);
 
 % Get the size of the image (all should be same size)
 [s1, s2, s3] = size(arrows.left.img);
@@ -119,12 +130,23 @@ end
 %----------------------------------------------------------------------
 
 % numtrials = 8;
-numtrials = 2;
+numtrials = 1;
 numblocks = 1;
 
 %init data matrices
 timestamps = nan(numtrials,5,numblocks);
 subj_resp = cell(numtrials,numblocks);
+progression = nan(1,100);
+
+%build the maze
+room_nums = flipud(rot90(reshape([1:36],6,6)));  %assign numbers to rooms
+[roomrows,roomcols] = size(room_nums);
+radial_rooms = [1:8];  %extra 8 rooms; [37:44]?
+foyer = 32;  %room you start in
+progression(1) = foyer;
+[a,b] = find(room_nums==foyer);
+
+
 
 %----------------------------------------------------------------------
 %                       Timing Information
@@ -137,8 +159,11 @@ holdTimeSecs = 1.5;
 holdTimeFrames = round(holdTimeSecs/ifi);
 
 %maximum maze presentation length
-spTimeSecs = 10;
+spTimeSecs = 30;
 spTimeFrames = round(spTimeSecs/ifi);
+
+%number of frames to present room transition
+transition_frames = 30;
 
 %Number of frames to wait before re-drawing
 waitframes = 1;
@@ -154,7 +179,7 @@ waitframes = 1;
 escapeKey = KbName('ESCAPE');
 
 lKey = KbName('LeftArrow');  %choose the left door
-uKey = KbName('UpArrow');  %choose the door directly ahead
+fKey = KbName('UpArrow');  %choose the door directly ahead (f for forward)
 rKey = KbName('RightArrow');  %choose the right door
 
 %----------------------------------------------------------------------
@@ -217,125 +242,231 @@ for block = 1:numblocks
     
     for trial = 1:numtrials
         
+        %timestamp trial start
+        timestamps(trial,1,block) = GetSecs;
+        
+        roomnum = foyer;
+        facing = 'up';  %direction you are facing (from topdown observer) at start
         spTimeFramescheck = 1;
         
         while spTimeFramescheck < spTimeFrames
         
-            for room = 1:25  %5x5 room grid, 25 possible rooms
+            for step = 1:length(progression)
                 
-                %timestamp trial start
-                timestamps(trial,1,block) = GetSecs;
+                %get the current room and store the progression
+                if step ~= 1
+                    roomnum = room_nums(a,b);
+                    progression(step) = roomnum;
+                end
                 
+                %search for rooms around us
+                [r,c] = find(roomnum==room_nums);
+                switch facing
+                    case 'left'
+                        r1 = r+1;
+                        c1 = c;
+                        
+                        r2 = r;
+                        c2 = c-1;
+                        
+                        r3 = r-1;
+                        c3 = c;
+                    case 'up'
+                        r1 = r;
+                        c1 = c-1;
+                        
+                        r2 = r-1;
+                        c2 = c;
+                        
+                        r3 = r;
+                        c3 = c+1;
+                    case 'right'
+                        r1 = r-1;
+                        c1 = c;
+                        
+                        r2 = r;
+                        c2 = c+1;
+                        
+                        r3 = r+1;
+                        c3 = c;
+                    case 'down'
+                        r1 = r;
+                        c1 = c+1;
+                        
+                        r2 = r+1;
+                        c2 = c;
+                        
+                        r3 = r;
+                        c3 = c-1;
+                end
+                        
+
                 %Cue to determine whether a response has been made
                 respToBeMade = true;
                 whichButton = 0;
                 
                 %present first frame of entrance room here, get timestamp of
                 %presentation
-                Screen('DrawTexture',window,arrows.left.texture,[],leftdstRect,0);
-                Screen('DrawTexture',window,arrows.up.texture,[],updstRect,0);
-                Screen('DrawTexture',window,arrows.right.texture,[],rightdstRect,0);
+                if r1 >= 1 && r1 <= roomrows && c1 >= 1 && c1 <= roomcols
+                    Screen('DrawTexture',window,arrows.left.texture,[],leftdstRect,0);
+                end
+                if r2 >= 1 && r2 <= roomrows && c2 >= 1 && c2 <= roomcols
+                    Screen('DrawTexture',window,arrows.up.texture,[],updstRect,0);
+                end
+                if r3 >= 1 && r3 <= roomrows && c3 >= 1 && c3 <= roomcols
+                    Screen('DrawTexture',window,arrows.right.texture,[],rightdstRect,0);
+                end
+                if step==1 || isempty(find(progression(1:step-1)==roomnum,1))
+                    DrawFormattedText(window, 'You HAVE NOT been here before!',...
+                        'center', 'center', white);
+                else
+                    DrawFormattedText(window, 'You have been here before!',...
+                        'center', 'center', white);
+                end
                 [timestamps(trial,2,block),~,~,~,~] = Screen('Flip',window);
                 
                 while respToBeMade == true && spTimeFramescheck < spTimeFrames
                     
                     [keyIsDown,secs, keyCode] = KbCheck;
                     if keyCode(escapeKey)
-                        subj_resp{trial,block} = 'Esc';
+                        subj_resp{trial,block}(step) = 'E';
                         ShowCursor;
                         sca;
                         return
                     elseif keyCode(lKey)
-                        subj_resp{trial,block} = 'L';
+                        subj_resp{trial,block}(step) = 'L';
                         timestamps(trial,3,block) = secs;
                         respToBeMade = false;
-                        nextroom = 'left';
-                    elseif keyCode(uKey)
-                        subj_resp{trial,block} = 'U';
+                        switch facing
+                            case 'left'
+                                [a,b] = find(room_nums==roomnum+6);
+                                facing = 'down';
+                            case 'up'
+                                [a,b] = find(room_nums==roomnum-1);
+                                facing = 'left';
+                            case 'right'
+                                [a,b] = find(room_nums==roomnum-6);
+                                facing = 'up';
+                            case 'down'
+                                [a,b] = find(room_nums==roomnum+1);
+                                facing = 'right';
+                        end
+                        for frame = 1:transition_frames
+                            
+                            if r1 >= 1 && r1 <= roomrows && c1 >= 1 && c1 <= roomcols
+                                Screen('DrawTexture',window,arrows.rleft.texture,[],leftdstRect,0);
+                            end
+                            if r2 >= 1 && r2 <= roomrows && c2 >= 1 && c2 <= roomcols
+                                Screen('DrawTexture',window,arrows.up.texture,[],updstRect,0);
+                            end
+                            if r3 >= 1 && r3 <= roomrows && c3 >= 1 && c3 <= roomcols
+                                Screen('DrawTexture',window,arrows.right.texture,[],rightdstRect,0);
+                            end
+                            Screen('Flip',window);
+                            spTimeFramescheck = spTimeFramescheck+1;
+                            
+                        end
+                    elseif keyCode(fKey)
+                        subj_resp{trial,block}(step) = 'F';
                         timestamps(trial,3,block) = secs;
                         respToBeMade = false;
-                        nextroom = 'forward';
+                        switch facing  %facing stays the same in this case
+                            case 'left'
+                                [a,b] = find(room_nums==roomnum-1);
+                            case 'up'
+                                [a,b] = find(room_nums==roomnum-6);
+                            case 'right'
+                                [a,b] = find(room_nums==roomnum+1);
+                            case 'down'
+                                [a,b] = find(room_nums==roomnum+6);
+                        end
+                        for frame = 1:transition_frames
+                            
+                            if r1 >= 1 && r1 <= roomrows && c1 >= 1 && c1 <= roomcols
+                                Screen('DrawTexture',window,arrows.left.texture,[],leftdstRect,0);
+                            end
+                            if r2 >= 1 && r2 <= roomrows && c2 >= 1 && c2 <= roomcols
+                                Screen('DrawTexture',window,arrows.rup.texture,[],updstRect,0);
+                            end
+                            if r3 >= 1 && r3 <= roomrows && c3 >= 1 && c3 <= roomcols
+                                Screen('DrawTexture',window,arrows.right.texture,[],rightdstRect,0);
+                            end
+                            Screen('Flip',window);
+                            spTimeFramescheck = spTimeFramescheck+1;
+                            
+                        end
                     elseif keyCode(rKey)
-                        subj_resp{trial,block} = 'R';
+                        subj_resp{trial,block}(step) = 'R';
                         timestamps(trial,3,block) = secs;
                         respToBeMade = false;
-                        nextroom = 'right';
-                        pause(.1) %figure out a better way to do this
+                        switch facing
+                            case 'left'
+                                [a,b] = find(room_nums==roomnum-6);
+                                facing = 'up';
+                            case 'up'
+                                [a,b] = find(room_nums==roomnum+1);
+                                facing = 'right';
+                            case 'right'
+                                [a,b] = find(room_nums==roomnum+6);
+                                facing = 'down';
+                            case 'down'
+                                [a,b] = find(room_nums==roomnum-1);
+                                facing = 'left';
+                        end
+                        for frame = 1:transition_frames
+                            
+                            if r1 >= 1 && r1 <= roomrows && c1 >= 1 && c1 <= roomcols
+                                Screen('DrawTexture',window,arrows.left.texture,[],leftdstRect,0);
+                            end
+                            if r2 >= 1 && r2 <= roomrows && c2 >= 1 && c2 <= roomcols
+                                Screen('DrawTexture',window,arrows.up.texture,[],updstRect,0);
+                            end
+                            if r3 >= 1 && r3 <= roomrows && c3 >= 1 && c3 <= roomcols
+                                Screen('DrawTexture',window,arrows.rright.texture,[],rightdstRect,0);
+                            end
+                            Screen('Flip',window);
+                            spTimeFramescheck = spTimeFramescheck+1;
+                            
+                        end
                     end
                     
                     %doing this forces the while loop to tick at the
                     %refresh rate of the monitor
-                    Screen('DrawTexture',window,arrows.left.texture,[],leftdstRect,0);
-                    Screen('DrawTexture',window,arrows.up.texture,[],updstRect,0);
-                    Screen('DrawTexture',window,arrows.right.texture,[],rightdstRect,0);
-                    [timestamps(trial,2,block),~,~,~,~] = Screen('Flip',window);
+                    if r1 >= 1 && r1 <= roomrows && c1 >= 1 && c1 <= roomcols
+                        Screen('DrawTexture',window,arrows.left.texture,[],leftdstRect,0);
+                    end
+                    if r2 >= 1 && r2 <= roomrows && c2 >= 1 && c2 <= roomcols
+                        Screen('DrawTexture',window,arrows.up.texture,[],updstRect,0);
+                    end
+                    if r3 >= 1 && r3 <= roomrows && c3 >= 1 && c3 <= roomcols
+                        Screen('DrawTexture',window,arrows.right.texture,[],rightdstRect,0);
+                    end
+                    if  step==1 || isempty(find(progression(1:step-1)==roomnum,1))
+                        DrawFormattedText(window, 'You HAVE NOT been here before!',...
+                            'center', 'center', white);
+                    else
+                        DrawFormattedText(window, 'You have been here before!',...
+                            'center', 'center', white);
+                    end
+                    Screen('Flip',window);
                     
                     spTimeFramescheck = spTimeFramescheck+1;
                     
                 end
                 
-                disp(room)
-                
             end
         
         end
-        
-%         switch nextroom
-%             
-%             case 'left'
-%                 %do things
-%             case 'forward'
-%                 %do things
-%             case 'right'
-%                 %do things
-%                 
-%         end
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+  
     end
+    
 end
 
 
 DrawFormattedText(window, 'Thanks for playing!',...
     'center', 'center', white);
 Screen('Flip', window);
-pause(2)
-
+KbStrokeWait;
 
 ShowCursor;
 sca;
