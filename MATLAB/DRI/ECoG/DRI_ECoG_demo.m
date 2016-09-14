@@ -8,8 +8,8 @@
 
 %base path for images?
 % imgbasepath = 'C:\temp_patrick\RP_images\';
-% imgbasepath = 'P:\data\DRI\RP_images\';
-imgbasepath = 'Z:\Work\UW\projects\RR_TMS\RP_images\';
+imgbasepath = 'Z:\data\DRI\RP_images\';
+% imgbasepath = 'Z:\Work\UW\projects\RR_TMS\RP_images\';
 
 %which hand are we working with?
 hand = input('Which hand are we working with? 0 for left, 1 for right: ');
@@ -132,7 +132,7 @@ end
 %                       Trial information
 %----------------------------------------------------------------------
 
-numtrials = 16;
+numtrials = 160;
 % numtrials = 160;
 numblocks = 2;
 
