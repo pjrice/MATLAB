@@ -142,10 +142,31 @@ progression = nan(1,100);
 room_nums = flipud(rot90(reshape([1:36],6,6)));  %assign numbers to rooms
 [roomrows,roomcols] = size(room_nums);
 radial_rooms = [1:8];  %extra 8 rooms; [37:44]?
-foyer = 32;  %room you start in
+foyer = 34;  %room you are looking at at start
 progression(1) = foyer;
 [a,b] = find(room_nums==foyer);
 
+%gain/loss values
+gainvalues = [1 1 1 5 5 5 10 10 10 25 25 25 50 50 50 100 100 100];
+% lossvalues = gainvalues*-1;
+
+%hardcode gain/loss values to room numbers for solvable condition (aka
+%create an optimal path through the maze)
+actual_path_gvals = [1 5 1 10 5 50 25 10 100 50 5 25 10 1 25 100 50 100]; %from entrance, this is the order of gains
+actual_path_grooms = [34 35 36 30 29 23 17 18 12 6 5 4 10 9 15 14 13 7];
+actual_path = [actual_path_grooms',actual_path_gvals'];
+
+loss_rooms = room_nums(find(ismember(room_nums,actual_path_grooms)==0));
+loss_values = [-1 -100 -5 -50 -25 -50 -10 -25 -5 -100 -5 -10 -1 -25 -50 -1 -10 -100];
+loss_path = [loss_rooms,loss_values'];
+
+%give the subject some money to start with so that losing some isn't as bad
+%sum(gainvalues) = 573, so 600 is enough that we never finish with neg
+starting_gold = 600;
+
+%build strings to display
+
+%sprintf('You %s %d gold coins!','lost',loss_values(1))
 
 
 %----------------------------------------------------------------------
@@ -159,7 +180,7 @@ holdTimeSecs = 1.5;
 holdTimeFrames = round(holdTimeSecs/ifi);
 
 %maximum maze presentation length
-spTimeSecs = 30;
+spTimeSecs = 300;
 spTimeFrames = round(spTimeSecs/ifi);
 
 %number of frames to present room transition
@@ -178,9 +199,9 @@ waitframes = 1;
 
 escapeKey = KbName('ESCAPE');
 
-lKey = KbName('LeftArrow');  %choose the left door
-fKey = KbName('UpArrow');  %choose the door directly ahead (f for forward)
-rKey = KbName('RightArrow');  %choose the right door
+% lKey = KbName('LeftArrow');  %choose the left door
+% fKey = KbName('UpArrow');  %choose the door directly ahead (f for forward)
+% rKey = KbName('RightArrow');  %choose the right door
 
 %----------------------------------------------------------------------
 %                       Task Loop
@@ -245,18 +266,66 @@ for block = 1:numblocks
         %timestamp trial start
         timestamps(trial,1,block) = GetSecs;
         
-        roomnum = foyer;
+        respToBeMade = true;
         facing = 'up';  %direction you are facing (from topdown observer) at start
         spTimeFramescheck = 1;
         
+        %present until subject is ready; press any key to continue
+        DrawFormattedText(window, sprintf('Enter the dungeon when you are ready! \n You currently have %d gold',starting_gold),...
+            'center', 'center', white);
+        Screen('DrawTexture',window,arrows.up.texture,[],updstRect,0);
+        fKey = KbName('UpArrow');  %choose the door directly ahead (f for forward)
+        Screen('Flip', window);
+        
+        while respToBeMade == true
+            
+            [keyIsDown,secs, keyCode] = KbCheck;
+            if keyCode(escapeKey)
+%                 subj_resp{trial,block}(stepper) = 'E';
+                ShowCursor;
+                sca;
+                return
+            elseif keyCode(fKey)
+%                 subj_resp{trial,block}(stepper) = 'F';
+                timestamps(trial,3,block) = secs;
+                respToBeMade = false;
+                roomnum = foyer;
+                for frame = 1:transition_frames
+                    Screen('DrawTexture',window,arrows.rup.texture,[],updstRect,0);
+                    Screen('Flip',window);
+                end
+            end
+        end
+        
+        
+        
         while spTimeFramescheck < spTimeFrames
         
-            for step = 1:length(progression)
+            for stepper = 2:length(progression)
+                
+                %init these as silenced (5 is unused in keyboard
+                %assignment)
+                %only enable arrow keys if arrow is displayed (a bit later)
+                lKey = 5;  %choose the left door
+                fKey = 5;  %choose the door directly ahead (f for forward)
+                rKey = 5;  %choose the right door
                 
                 %get the current room and store the progression
-                if step ~= 1
+                if stepper ~= 2
                     roomnum = room_nums(a,b);
-                    progression(step) = roomnum;
+                    progression(stepper) = roomnum;
+                end
+                
+                %get gain/loss of room and value to print
+                if ~isempty(find(actual_path(:,1)==roomnum))
+                    
+                    gainloss = actual_path(find(actual_path(:,1)==roomnum),2);
+                    word = 'gain';
+                else
+                    
+                    gainloss = loss_path(find(loss_path(:,1)==roomnum),2);
+                    word = 'lost';
+                    
                 end
                 
                 %search for rooms around us
@@ -303,21 +372,26 @@ for block = 1:numblocks
 
                 %Cue to determine whether a response has been made
                 respToBeMade = true;
-                whichButton = 0;
+%                 whichButton = 0;
                 
                 %present first frame of entrance room here, get timestamp of
                 %presentation
+                %only present arrow if the room it leads to actually exists
+                %only enable arrow keys if arrow is displayed
                 if r1 >= 1 && r1 <= roomrows && c1 >= 1 && c1 <= roomcols
                     Screen('DrawTexture',window,arrows.left.texture,[],leftdstRect,0);
+                    lKey = KbName('LeftArrow');  %choose the left door
                 end
                 if r2 >= 1 && r2 <= roomrows && c2 >= 1 && c2 <= roomcols
                     Screen('DrawTexture',window,arrows.up.texture,[],updstRect,0);
+                    fKey = KbName('UpArrow');  %choose the door directly ahead (f for forward)
                 end
                 if r3 >= 1 && r3 <= roomrows && c3 >= 1 && c3 <= roomcols
                     Screen('DrawTexture',window,arrows.right.texture,[],rightdstRect,0);
+                    rKey = KbName('RightArrow');  %choose the right door
                 end
-                if step==1 || isempty(find(progression(1:step-1)==roomnum,1))
-                    DrawFormattedText(window, 'You HAVE NOT been here before!',...
+                if stepper==2 || isempty(find(progression(1:stepper-1)==roomnum,1))
+                    DrawFormattedText(window, sprintf('You %s %d gold!',word,gainloss),...
                         'center', 'center', white);
                 else
                     DrawFormattedText(window, 'You have been here before!',...
@@ -329,12 +403,12 @@ for block = 1:numblocks
                     
                     [keyIsDown,secs, keyCode] = KbCheck;
                     if keyCode(escapeKey)
-                        subj_resp{trial,block}(step) = 'E';
+                        subj_resp{trial,block}(stepper) = 'E';
                         ShowCursor;
                         sca;
                         return
                     elseif keyCode(lKey)
-                        subj_resp{trial,block}(step) = 'L';
+                        subj_resp{trial,block}(stepper) = 'L';
                         timestamps(trial,3,block) = secs;
                         respToBeMade = false;
                         switch facing
@@ -367,7 +441,7 @@ for block = 1:numblocks
                             
                         end
                     elseif keyCode(fKey)
-                        subj_resp{trial,block}(step) = 'F';
+                        subj_resp{trial,block}(stepper) = 'F';
                         timestamps(trial,3,block) = secs;
                         respToBeMade = false;
                         switch facing  %facing stays the same in this case
@@ -396,7 +470,7 @@ for block = 1:numblocks
                             
                         end
                     elseif keyCode(rKey)
-                        subj_resp{trial,block}(step) = 'R';
+                        subj_resp{trial,block}(stepper) = 'R';
                         timestamps(trial,3,block) = secs;
                         respToBeMade = false;
                         switch facing
@@ -441,8 +515,8 @@ for block = 1:numblocks
                     if r3 >= 1 && r3 <= roomrows && c3 >= 1 && c3 <= roomcols
                         Screen('DrawTexture',window,arrows.right.texture,[],rightdstRect,0);
                     end
-                    if  step==1 || isempty(find(progression(1:step-1)==roomnum,1))
-                        DrawFormattedText(window, 'You HAVE NOT been here before!',...
+                    if  stepper==2 || isempty(find(progression(1:stepper-1)==roomnum,1))
+                        DrawFormattedText(window, sprintf('You %s %d gold!',word,gainloss),...
                             'center', 'center', white);
                     else
                         DrawFormattedText(window, 'You have been here before!',...
