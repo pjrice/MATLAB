@@ -303,7 +303,7 @@ for block = 1:numblocks
             gold_progression(trial,1,block) = current_gold;
             
             %present until subject is ready; press any key to continue
-            DrawFormattedText(window, sprintf('Enter the dungeon when you are ready! \n You currently have %d gold.',current_gold),...
+            DrawFormattedText(window, sprintf('A mysterious figure gives you %d gold! \n Enter the dungeon when you are ready.',current_gold),...
                 'center', 'center', white);
             Screen('DrawTexture',window,arrows.up.texture,[],updstRect,0);
             fKey = KbName('UpArrow');  %choose the door directly ahead (f for forward)
@@ -433,7 +433,7 @@ for block = 1:numblocks
                         rKey = KbName('RightArrow');  %choose the right door
                     end
                     if stepper==2 || isempty(find(progression(trial,1:stepper-1,block)==roomnum,1))
-                        DrawFormattedText(window, sprintf('You %s %d gold! \n\n You currently have %d gold.',word,gainloss,current_gold),...
+                        DrawFormattedText(window, sprintf('You %s %d gold! \n\n You currently have %d gold.',word,abs(gainloss),current_gold),...
                             'center', 'center', white);
                     else
                         DrawFormattedText(window, 'You have been here before. \n\n There is no more gold to find here!',...
@@ -558,7 +558,7 @@ for block = 1:numblocks
                             Screen('DrawTexture',window,arrows.right.texture,[],rightdstRect,0);
                         end
                         if  stepper==2 || isempty(find(progression(trial,1:stepper-1,block)==roomnum,1))
-                            DrawFormattedText(window, sprintf('You %s %d gold! \n\n You currently have %d gold.',word,gainloss,current_gold),...
+                            DrawFormattedText(window, sprintf('You %s %d gold! \n\n You currently have %d gold.',word,abs(gainloss),current_gold),...
                                 'center', 'center', white);
                         else
                             DrawFormattedText(window, 'You have been here before! \n\n There is no more gold to find here!',...
@@ -574,12 +574,25 @@ for block = 1:numblocks
                 
             end
             timestamps(trial,4,block) = GetSecs;
+            
+            if current_gold-600 >= 0
+                
+                thaword = 'earned';
+                
+            else
+                
+                thaword = 'lost';
+                
+            end
+            
+            g_units = abs(current_gold-600);
+            
             if trial ~= numtrials
                 for s = [5 4 3 2 1]
                     
                     for f = 1:60
                         
-                        DrawFormattedText(window,sprintf('Next trial beginning in: \n %d \n\n You earned %d gold this run!',s,current_gold),'center','center',white);
+                        DrawFormattedText(window,sprintf('Next trial beginning in: \n %d \n\n You %s %d gold this run!',s,thaword,g_units),'center','center',white);
                         Screen('Flip',window);
                         
                     end
@@ -589,7 +602,7 @@ for block = 1:numblocks
                     
                     for f = 1:60
                         
-                        DrawFormattedText(window,sprintf('This was the last run of this block! \n\n You earned %d gold this run!',s,current_gold),'center','center',white);
+                        DrawFormattedText(window,sprintf('This was the last run of this block! \n\n You %s %d gold this run!',thaword,g_units),'center','center',white);
                         Screen('Flip',window);
                         
                     end
@@ -613,7 +626,7 @@ for block = 1:numblocks
             gold_progression(trial,1,block) = current_gold;
             
             %present until subject is ready; press any key to continue
-            DrawFormattedText(window, sprintf('Enter the dungeon when you are ready! \n You currently have %d gold.',current_gold),...
+            DrawFormattedText(window, sprintf('A mysterious figure gives you %d gold! \n Enter the dungeon when you are ready.',current_gold),...
                 'center', 'center', white);
             Screen('DrawTexture',window,arrows.up.texture,[],updstRect,0);
             fKey = KbName('UpArrow');  %choose the door directly ahead (f for forward)
@@ -745,7 +758,7 @@ for block = 1:numblocks
                         rKey = KbName('RightArrow');  %choose the right door
                     end
                     if stepper==2 || isempty(find(progression(trial,1:stepper-1,block)==roomnum,1))
-                        DrawFormattedText(window, sprintf('You %s %d gold! \n\n You currently have %d gold.',word,gainloss,current_gold),...
+                        DrawFormattedText(window, sprintf('You %s %d gold! \n\n You currently have %d gold.',word,abs(gainloss),current_gold),...
                             'center', 'center', white);
                     else
                         DrawFormattedText(window, 'You have been here before. \n\n There is no more gold to find here!',...
@@ -870,7 +883,7 @@ for block = 1:numblocks
                             Screen('DrawTexture',window,arrows.right.texture,[],rightdstRect,0);
                         end
                         if  stepper==2 || isempty(find(progression(trial,1:stepper-1,block)==roomnum,1))
-                            DrawFormattedText(window, sprintf('You %s %d gold! \n\n You currently have %d gold.',word,gainloss,current_gold),...
+                            DrawFormattedText(window, sprintf('You %s %d gold! \n\n You currently have %d gold.',word,abs(gainloss),current_gold),...
                                 'center', 'center', white);
                         else
                             DrawFormattedText(window, 'You have been here before! \n\n There is no more gold to find here!',...
@@ -887,12 +900,24 @@ for block = 1:numblocks
             end
             timestamps(trial,4,block) = GetSecs;
             
+            if current_gold-600 >= 0
+                
+                thaword = 'earned';
+                
+            else
+                
+                thaword = 'lost';
+                
+            end
+            
+            g_units = abs(current_gold-600);
+                
             if trial ~= numtrials
                 for s = [5 4 3 2 1]
                     
                     for f = 1:60
                         
-                        DrawFormattedText(window,sprintf('Next trial beginning in: \n %d \n\n You earned %d gold this run!',s,current_gold),'center','center',white);
+                        DrawFormattedText(window,sprintf('Next trial beginning in: \n %d \n\n You %s %d gold this run!',s,thaword,g_units),'center','center',white);
                         Screen('Flip',window);
                         
                     end
@@ -902,7 +927,7 @@ for block = 1:numblocks
                     
                     for f = 1:60
                         
-                        DrawFormattedText(window,sprintf('This was the last run! \n\n You earned %d gold this run!',s,current_gold),'center','center',white);
+                        DrawFormattedText(window,sprintf('This was the last run! \n\n You %s %d gold this run!',thaword,g_units),'center','center',white);
                         Screen('Flip',window);
                         
                     end
