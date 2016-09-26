@@ -2,13 +2,13 @@
 clear
 
 %filename?
-filename = 'C:\temp_patrick\data\semantics\';
-filename_append = input('Filename? ','s');
-filename = strcat(filename,filename_append);
+% filename = 'C:\temp_patrick\data\semantics\';
+% filename_append = input('Filename? ','s');
+% filename = strcat(filename,filename_append);
 
 %base path for images?
 % imgbasepath = 'C:\temp_patrick\RP_images\';
-imgbasepath = 'Z:\Work\UW\projects\semantics\stimuli\';
+imgbasepath = 'Z:\Work\UW\projects\SEM\stimuli\';
 % imgbasepath = 'Z:\Work\UW\projects\semantics\stimuli\';
 
 %which hand are we working with?
