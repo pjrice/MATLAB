@@ -371,11 +371,10 @@ for block = 1:numblocks
         
         %trial start
         %let's see how well these agree
-
+        timestamps(trial,1,block) = GetSecs;
         %send the "sound" as event timestamp
         soundstamps(trial,1,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
         PsychPortAudio('Stop', pahandle);
-        timestamps(trial,1,block) = GetSecs;
         
         %Cue to determine whether a response has been made
         respToBeMade = true;

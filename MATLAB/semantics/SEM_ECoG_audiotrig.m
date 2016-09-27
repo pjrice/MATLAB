@@ -78,6 +78,17 @@ topPriorityLevel = MaxPriority(window);
 %Set blend function for the screen
 Screen('BlendFunction',window,'GL_SRC_ALPHA','GL_ONE_MINUS_SRC_ALPHA');
 
+%Init audio for timestamping
+% InitializePsychSound
+InitializePsychSound(1)  %for really low latency
+
+soundfilename = 'Z:\Work\UW\projects\DRI\ECoG\1volt.wav';
+[sounddata,soundfreq] = audioread(soundfilename);
+nrchannels = 1;  %file is mono, not stereo
+reps = 1;  %only play the sound once each time it is called
+pahandle = PsychPortAudio('Open', [], [], 1, soundfreq, nrchannels);
+PsychPortAudio('FillBuffer', pahandle, sounddata');
+
 HideCursor
 
 %load images
@@ -136,6 +147,7 @@ numblocks = 1;
 
 %init data matrices
 timestamps = nan(numtrials,5,numblocks);
+soundstamps = nan(numtrials,5,numblocks);
 subj_resp = cell(numtrials,numblocks);
 
 %make stimuli references for later presentation
@@ -259,6 +271,9 @@ for block = 1:numblocks
         
         %timestamp trial start
         timestamps(trial,1,block) = GetSecs;
+        %send the "sound" as event timestamp
+        soundstamps(trial,1,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+        PsychPortAudio('Stop', pahandle);
         
         %Cue to determine whether a response has been made
         respToBeMade = true;
@@ -270,6 +285,8 @@ for block = 1:numblocks
         Screen('DrawLines', window, fixCoords,...
             lineWidthPix, white, [xCenter yCenter], 2);
         [timestamps(trial,2,block),~,~,~,~] = Screen('Flip', window);
+        soundstamps(trial,2,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+        PsychPortAudio('Stop', pahandle);
         
         % Now we present the hold interval with fixation point minus one frame
         % because we presented the fixation point once already when getting a
@@ -289,6 +306,8 @@ for block = 1:numblocks
             %timestamp stimulus presentation
             DrawFormattedText(window, things{stim_inds(trial,3)},'center', 'center', white);
             [timestamps(trial,3,block),~,~,~,~] = Screen('Flip', window);
+            soundstamps(trial,3,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+            PsychPortAudio('Stop', pahandle);
             
             spTimeFramescheck = 1;
             
@@ -303,10 +322,14 @@ for block = 1:numblocks
                 elseif keyCode(aKey) && isnan(timestamps(trial,4,block))
                     subj_resp{trial,block} = 'L';
                     timestamps(trial,4,block) = secs;
+                    soundstamps(trial,4,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+                    PsychPortAudio('Stop', pahandle);
                     respToBeMade = false;
                 elseif keyCode(lKey) && isnan(timestamps(trial,4,block))
                     subj_resp{trial,block} = 'R';
                     timestamps(trial,4,block) = secs;
+                    soundstamps(trial,4,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+                    PsychPortAudio('Stop', pahandle);
                     respToBeMade = false;
                 end
                 
@@ -321,6 +344,8 @@ for block = 1:numblocks
             
             Screen('DrawTexture', window, stimuli.(matlab.lang.makeValidName(cats{stim_inds(trial,2)})).(matlab.lang.makeValidName(things{stim_inds(trial,3)})).texture, [], dstRect, 0);
             [timestamps(trial,3,block),~,~,~,~] = Screen('Flip', window);
+            soundstamps(trial,3,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+            PsychPortAudio('Stop', pahandle);
             
             spTimeFramescheck = 1;
             
@@ -335,10 +360,14 @@ for block = 1:numblocks
                 elseif keyCode(aKey) && isnan(timestamps(trial,4,block))
                     subj_resp{trial,block} = 'L';
                     timestamps(trial,4,block) = secs;
+                    soundstamps(trial,4,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+                    PsychPortAudio('Stop', pahandle);
                     respToBeMade = false;
                 elseif keyCode(lKey) && isnan(timestamps(trial,4,block))
                     subj_resp{trial,block} = 'R';
                     timestamps(trial,4,block) = secs;
+                    soundstamps(trial,4,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+                    PsychPortAudio('Stop', pahandle);
                     respToBeMade = false;
                 end
                 
@@ -351,9 +380,13 @@ for block = 1:numblocks
         end
         %timestamp trial end, display trial number
         timestamps(trial,5,block) = GetSecs;
+        soundstamps(trial,5,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+        PsychPortAudio('Stop', pahandle);
         disp(trial)
     end  
 end
+
+PsychPortAudio('Close');
         
 
 DrawFormattedText(window, 'Thanks for playing!',...
