@@ -27,32 +27,29 @@ for f = 1:length(filelist)
     despiked = nan(size(data));
     
     %remove artifacts and highpass filter
-    for i = 1:size(data,1)
+    for i = 1:size(data,2)
         
-        %filtfilt (used in despikev3) needs data input to be double
-        %precision
-        %will be addressed in the future when I import SEV files into
-        %matlab on TDT system and they are naturally double rather than
-        %single
-        data_in = double(data(i,:));
-        
+        %temporary
+        despiked(:,i) = filtfilt(b,a,data(:,i));
+
         %despike v3 took forever on my system (aka overnight to despike 2
         %artifacts from one channel)
-        despiked(i,:) = despike(data_in);
         
-        clear data_in
+        %not despiked at all right now because new (better) data format is
+        %breaking it - investigate
+%         despiked(:,i) = despike(data(:,i));
         
-        despiked(i,:) = filtfilt(b,a,despiked(i,:));
+%         despiked(:,i) = filtfilt(b,a,despiked(:,i));
         
     end
     
     clear data a b i 
     
     %common average reference
-    ds_mean = mean(despiked);
-    for i = 1:size(despiked,1)
+    ds_mean = mean(despiked,2);
+    for i = 1:size(despiked,2)
         
-        despiked(i,:) = despiked(i,:) - ds_mean;
+        despiked(:,i) = despiked(:,i) - ds_mean;
         
     end
     
