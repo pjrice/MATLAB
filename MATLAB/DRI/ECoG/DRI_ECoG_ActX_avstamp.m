@@ -79,6 +79,17 @@ topPriorityLevel = MaxPriority(window);
 %Set blend function for the screen
 Screen('BlendFunction',window,'GL_SRC_ALPHA','GL_ONE_MINUS_SRC_ALPHA');
 
+%Init audio for timestamping
+% InitializePsychSound
+InitializePsychSound  %arg==1 for really low latency
+
+soundfilename = 'Z:\Work\UW\projects\DRI\ECoG\1volt.wav';
+[sounddata,soundfreq] = audioread(soundfilename);
+nrchannels = 1;  %file is mono, not stereo
+reps = 1;  %only play the sound once each time it is called
+pahandle = PsychPortAudio('Open', [], [], 1, soundfreq, nrchannels);
+PsychPortAudio('FillBuffer', pahandle, sounddata');
+
 HideCursor
 
 %load images
@@ -306,6 +317,7 @@ end
 %12th: 
 
 timestamps = nan(numtrials,11,numblocks);
+soundstamps = nan(numtrials,11,numblocks);
 
 %Timing matrices - VBLTimestamp, StimulusOnsetTime, FlipTimestamp, Missed,
 %Beampos are all output by Screen('Flip') - see 'Screen Flip?' for details.
@@ -397,8 +409,15 @@ for block = 1:numblocks
     
     for trial = 1:numtrials
         
-%         fwrite(u,[sd_header, udpdata(trial)],'int32','async');  %trial start - sends trial number so there's a way to track that on braindata
-        timestamps(trial,1,block) = GetSecs;
+%         timestamps(trial,1,block) = GetSecs;
+        Screen('FillRect',window,black);
+        Screen('FillRect', window, white, tsdstRect);
+        [timestamps(trial,1,block),~,...
+            ~,~,...
+            ~] = Screen('Flip', window);
+        %send the "sound" as event timestamp
+        soundstamps(trial,1,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+        PsychPortAudio('Stop', pahandle);
         
         %Cue to determine whether a response has been made
         respToBeMade = true;
@@ -408,11 +427,11 @@ for block = 1:numblocks
         %fixation cross
         Screen('DrawLines', window, fixCoords,...
             lineWidthPix, white, [xCenter yCenter], 2);
+        Screen('FillRect', window, white, tsdstRect);
         [timestamps(trial,2,block),StimulusOnsetTime(trial,1,block),...
             FlipTimestamp(trial,1,block),Missed(trial,1,block),...
             Beampos(trial,1,block)] = Screen('Flip', window);
-        evt_data = int32(timestamps(trial,2,block));
-%         fwrite(u,[sd_header, evt_data],'int32','async');  %fixation onset
+
 
         % Now we present the hold interval with fixation point minus one frame
         % because we presented the fixation point once already when getting a
@@ -422,7 +441,7 @@ for block = 1:numblocks
             % Draw the fixation point
             Screen('DrawLines', window, fixCoords,...
                 lineWidthPix, white, [xCenter yCenter], 2);
-            Screen('FillRect', window, white, tsdstRect);
+%             Screen('FillRect', window, white, tsdstRect);
             
             %Flip to the screen
             Screen('Flip', window);
@@ -438,28 +457,32 @@ for block = 1:numblocks
                 'center', 'center', white);
             Screen('DrawTexture', window,...
                 Finger_Textures{fingerchooser(trial)}, [], dstRect, 0);
+            Screen('FillRect', window, white, tsdstRect);
             [timestamps(trial,4,block),StimulusOnsetTime(trial,2,block),...
                 FlipTimestamp(trial,2,block),Missed(trial,2,block),...
                 Beampos(trial,2,block)] = Screen('Flip', window);
-            evt_data = int32(timestamps(trial,4,block));
-%             fwrite(u,[sd_header, evt_data],'int32','async');  %rule presentation
+
             
             spTimeFramescheck = 1;
             
             while respToBeMade == true
                 
-                DrawFormattedText(window, print_evenodd{trial,block},...
-                    'center', 'center', white);
-                Screen('DrawTexture', window,...
-                    Finger_Textures{fingerchooser(trial)}, [], dstRect, 0);
-                Screen('Flip', window);
+%                 DrawFormattedText(window, print_evenodd{trial,block},...
+%                     'center', 'center', white);
+%                 Screen('DrawTexture', window,...
+%                     Finger_Textures{fingerchooser(trial)}, [], dstRect, 0);
+%                 Screen('Flip', window);
                 
                 [keyIsDown,secs, keyCode] = KbCheck;
                 
                 if keyCode(spacebar)
-                    timestamps(trial,5,block) = GetSecs;
-                    evt_data = int32(timestamps(trial,5,block));
-%                     fwrite(u,[sd_header, evt_data],'int32','async');  %rule response
+                    timestamps(trial,5,block) = secs;
+                    DrawFormattedText(window, print_evenodd{trial,block},...
+                        'center', 'center', white);
+                    Screen('DrawTexture', window,...
+                        Symbol_Textures{symbolchooser(trial)}, [], dstRect, 0);
+                    Screen('FillRect', window, white, tsdstRect);
+                    Screen('Flip', window);
                     respToBeMade = false;
                     
                 elseif keyCode(escapeKey)
@@ -470,6 +493,11 @@ for block = 1:numblocks
                     
                 end
 
+                DrawFormattedText(window, print_evenodd{trial,block},...
+                    'center', 'center', white);
+                Screen('DrawTexture', window,...
+                    Symbol_Textures{symbolchooser(trial)}, [], dstRect, 0);
+                Screen('Flip', window);
                 spTimeFramescheck = spTimeFramescheck + 1;
                 
             end
@@ -480,28 +508,31 @@ for block = 1:numblocks
                 'center', 'center', white);
             Screen('DrawTexture', window,...
                 Symbol_Textures{symbolchooser(trial)}, [], dstRect, 0);
+            Screen('FillRect', window, white, tsdstRect);
             [timestamps(trial,4,block),StimulusOnsetTime(trial,2,block),...
                 FlipTimestamp(trial,2,block),Missed(trial,2,block),...
                 Beampos(trial,2,block)] = Screen('Flip', window);
-            evt_data = int32(timestamps(trial,4,block));
-%             fwrite(u,[sd_header, evt_data],'int32','async');  %rule presentation
             
             spTimeFramescheck = 1;
             
             while respToBeMade == true
                 
-                DrawFormattedText(window, print_evenodd{trial,block},...
-                    'center', 'center', white);
-                Screen('DrawTexture', window,...
-                    Symbol_Textures{symbolchooser(trial)}, [], dstRect, 0);
-                Screen('Flip', window);
+%                 DrawFormattedText(window, print_evenodd{trial,block},...
+%                     'center', 'center', white);
+%                 Screen('DrawTexture', window,...
+%                     Symbol_Textures{symbolchooser(trial)}, [], dstRect, 0);
+%                 Screen('Flip', window);
                 
                 [keyIsDown,secs, keyCode] = KbCheck;
                 
                 if keyCode(spacebar)
-                    timestamps(trial,5,block) = GetSecs;
-                    evt_data = int32(timestamps(trial,5,block));
-%                     fwrite(u,[sd_header, evt_data],'int32','async');  %rule response
+                    timestamps(trial,5,block) = secs;
+                    DrawFormattedText(window, print_evenodd{trial,block},...
+                        'center', 'center', white);
+                    Screen('DrawTexture', window,...
+                        Symbol_Textures{symbolchooser(trial)}, [], dstRect, 0);
+                    Screen('FillRect', window, white, tsdstRect);
+                    Screen('Flip', window);
                     respToBeMade = false;
                     
                 elseif keyCode(escapeKey)
@@ -511,7 +542,12 @@ for block = 1:numblocks
                     return
                     
                 end
-
+                
+                DrawFormattedText(window, print_evenodd{trial,block},...
+                    'center', 'center', white);
+                Screen('DrawTexture', window,...
+                    Symbol_Textures{symbolchooser(trial)}, [], dstRect, 0);
+                Screen('Flip', window);
                 spTimeFramescheck = spTimeFramescheck + 1;
                 
             end
@@ -525,12 +561,10 @@ for block = 1:numblocks
         
         Screen('DrawLines', window, allCoords,...
             lineWidthPix, white, [xCenter yCenter], 2);
-        
+        Screen('FillRect', window, white, tsdstRect);
         [timestamps(trial,6,block),StimulusOnsetTime(trial,3,block),...
             FlipTimestamp(trial,3,block),Missed(trial,3,block),...
             Beampos(trial,3,block)] = Screen('Flip', window);
-        evt_data = int32(timestamps(trial,6,block));
-%         fwrite(u,[sd_header, evt_data],'int32','async');  %delay fix
         
         
         for frame = 1:isis(trial,block) - 1
@@ -555,12 +589,11 @@ for block = 1:numblocks
             screenXpixels*0.25, screenYpixels*0.75, white);
         DrawFormattedText(window, printstim_l3(trial,block),...
             screenXpixels*0.75, screenYpixels*0.75, white);
-        
+        Screen('FillRect', window, white, tsdstRect);
         [timestamps(trial,8,block),StimulusOnsetTime(trial,4,block),...
             FlipTimestamp(trial,4,block),Missed(trial,4,block),...
             Beampos(trial,4,block)] = Screen('Flip', window);
-        evt_data = int32(timestamps(trial,8,block));
-%         fwrite(u,[sd_header, evt_data],'int32','async');  %stimulus presentation
+
         
         
         spTimeFramescheck = 1;
@@ -576,24 +609,34 @@ for block = 1:numblocks
             elseif keyCode(aKey)
                 subj_resp{trial,block} = 'L';
                 timestamps(trial,9,block) = secs;
-                evt_data = int32(timestamps(trial,9,block));
-%                 fwrite(u,[sd_header, evt_data],'int32','async');  %stimulus response
-                
+                DrawFormattedText(window, printstim_l1(trial,block), 'center',...
+                    'center', white);
+                DrawFormattedText(window, printstim_l2(trial,block),...
+                    screenXpixels*0.25, screenYpixels*0.75, white);
+                DrawFormattedText(window, printstim_l3(trial,block),...
+                    screenXpixels*0.75, screenYpixels*0.75, white);
+                Screen('FillRect', window, white, tsdstRect);
+                Screen('Flip', window);
                 respToBeMade = false;
                 
             elseif keyCode(sKey)
                 subj_resp{trial,block} = 'R';
                 timestamps(trial,9,block) = secs;
-                evt_data = int32(timestamps(trial,9,block));
-%                 fwrite(u,[sd_header, evt_data],'int32','async');  %stimulus response
-
+                DrawFormattedText(window, printstim_l1(trial,block), 'center',...
+                    'center', white);
+                DrawFormattedText(window, printstim_l2(trial,block),...
+                    screenXpixels*0.25, screenYpixels*0.75, white);
+                DrawFormattedText(window, printstim_l3(trial,block),...
+                    screenXpixels*0.75, screenYpixels*0.75, white);
+                Screen('FillRect', window, white, tsdstRect);
+                Screen('Flip', window);
                 respToBeMade = false;
             end
             
             DrawFormattedText(window, printstim_l1(trial,block), 'center',...
                 'center', white);
-%             DrawFormattedText(window, printstim_l2(trial,block),...
-%                 screenXpixels*0.25, screenYpixels*0.75, white);
+            DrawFormattedText(window, printstim_l2(trial,block),...
+                screenXpixels*0.25, screenYpixels*0.75, white);
             DrawFormattedText(window, printstim_l3(trial,block),...
                 screenXpixels*0.75, screenYpixels*0.75, white);
             Screen('Flip', window);
@@ -605,11 +648,11 @@ for block = 1:numblocks
         true_RPTF(trial,block) = spTimeFramescheck + 1;
 
         Screen('FillRect',window,black);
+        Screen('FillRect', window, white, tsdstRect);
         [timestamps(trial,10,block),StimulusOnsetTime(trial,5,block),...
             FlipTimestamp(trial,5,block),Missed(trial,5,block),...
             Beampos(trial,5,block)] = Screen('Flip', window);
-        evt_data = int32(timestamps(trial,10,block));
-%         fwrite(u,[sd_header, evt_data],'int32','async');  %ITI onset
+
         
         for frame = 1:1:itis(trial,block) - 1
             
@@ -622,12 +665,12 @@ for block = 1:numblocks
         
 
         timestamps(trial,11,block) = GetSecs;  %relative to streamstart_time
-        evt_data = int32(timestamps(trial,11,block));
-%         fwrite(u,[sd_header, evt_data],'int32','async');  %trial end
         realtime(trial,block) = toc;  %relative to tic
  
     end    
 end
+
+PsychPortAudio('Close');
 
 DrawFormattedText(window, 'Thanks for playing!',...
     'center', 'center', white);
