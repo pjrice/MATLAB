@@ -402,6 +402,9 @@ DrawFormattedText(window, 'Press any key to begin',...
 Screen('Flip', window);
 KbStrokeWait;
 
+PsychPortAudio('Start', pahandle, reps, 0, 1);
+PsychPortAudio('Stop', pahandle);
+
 %try a couple of different timestamping methods
 streamstart_time = GetSecs;
 tic
@@ -412,9 +415,7 @@ for block = 1:numblocks
 %         timestamps(trial,1,block) = GetSecs;
         Screen('FillRect',window,black);
         Screen('FillRect', window, white, tsdstRect);
-        [timestamps(trial,1,block),~,...
-            ~,~,...
-            ~] = Screen('Flip', window);
+        [timestamps(trial,1,block),~,~,~,~] = Screen('Flip', window);
         %send the "sound" as event timestamp
         soundstamps(trial,1,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
         PsychPortAudio('Stop', pahandle);
@@ -431,6 +432,8 @@ for block = 1:numblocks
         [timestamps(trial,2,block),StimulusOnsetTime(trial,1,block),...
             FlipTimestamp(trial,1,block),Missed(trial,1,block),...
             Beampos(trial,1,block)] = Screen('Flip', window);
+        soundstamps(trial,2,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+        PsychPortAudio('Stop', pahandle);
 
 
         % Now we present the hold interval with fixation point minus one frame
@@ -461,6 +464,8 @@ for block = 1:numblocks
             [timestamps(trial,4,block),StimulusOnsetTime(trial,2,block),...
                 FlipTimestamp(trial,2,block),Missed(trial,2,block),...
                 Beampos(trial,2,block)] = Screen('Flip', window);
+            soundstamps(trial,4,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+            PsychPortAudio('Stop', pahandle);
 
             
             spTimeFramescheck = 1;
@@ -483,6 +488,8 @@ for block = 1:numblocks
                         Symbol_Textures{symbolchooser(trial)}, [], dstRect, 0);
                     Screen('FillRect', window, white, tsdstRect);
                     Screen('Flip', window);
+                    soundstamps(trial,5,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+                    PsychPortAudio('Stop', pahandle);
                     respToBeMade = false;
                     
                 elseif keyCode(escapeKey)
@@ -512,6 +519,8 @@ for block = 1:numblocks
             [timestamps(trial,4,block),StimulusOnsetTime(trial,2,block),...
                 FlipTimestamp(trial,2,block),Missed(trial,2,block),...
                 Beampos(trial,2,block)] = Screen('Flip', window);
+            soundstamps(trial,4,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+            PsychPortAudio('Stop', pahandle);
             
             spTimeFramescheck = 1;
             
@@ -533,6 +542,8 @@ for block = 1:numblocks
                         Symbol_Textures{symbolchooser(trial)}, [], dstRect, 0);
                     Screen('FillRect', window, white, tsdstRect);
                     Screen('Flip', window);
+                    soundstamps(trial,5,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+                    PsychPortAudio('Stop', pahandle);
                     respToBeMade = false;
                     
                 elseif keyCode(escapeKey)
@@ -565,6 +576,8 @@ for block = 1:numblocks
         [timestamps(trial,6,block),StimulusOnsetTime(trial,3,block),...
             FlipTimestamp(trial,3,block),Missed(trial,3,block),...
             Beampos(trial,3,block)] = Screen('Flip', window);
+        soundstamps(trial,6,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+        PsychPortAudio('Stop', pahandle);
         
         
         for frame = 1:isis(trial,block) - 1
@@ -593,6 +606,8 @@ for block = 1:numblocks
         [timestamps(trial,8,block),StimulusOnsetTime(trial,4,block),...
             FlipTimestamp(trial,4,block),Missed(trial,4,block),...
             Beampos(trial,4,block)] = Screen('Flip', window);
+        soundstamps(trial,8,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+        PsychPortAudio('Stop', pahandle);
 
         
         
@@ -617,6 +632,8 @@ for block = 1:numblocks
                     screenXpixels*0.75, screenYpixels*0.75, white);
                 Screen('FillRect', window, white, tsdstRect);
                 Screen('Flip', window);
+                soundstamps(trial,9,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+                PsychPortAudio('Stop', pahandle);
                 respToBeMade = false;
                 
             elseif keyCode(sKey)
@@ -630,6 +647,8 @@ for block = 1:numblocks
                     screenXpixels*0.75, screenYpixels*0.75, white);
                 Screen('FillRect', window, white, tsdstRect);
                 Screen('Flip', window);
+                soundstamps(trial,9,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+                PsychPortAudio('Stop', pahandle);
                 respToBeMade = false;
             end
             
@@ -652,6 +671,8 @@ for block = 1:numblocks
         [timestamps(trial,10,block),StimulusOnsetTime(trial,5,block),...
             FlipTimestamp(trial,5,block),Missed(trial,5,block),...
             Beampos(trial,5,block)] = Screen('Flip', window);
+        soundstamps(trial,10,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+        PsychPortAudio('Stop', pahandle);
 
         
         for frame = 1:1:itis(trial,block) - 1
@@ -663,9 +684,11 @@ for block = 1:numblocks
         
         disp(trial)
         
-
-        timestamps(trial,11,block) = GetSecs;  %relative to streamstart_time
-        realtime(trial,block) = toc;  %relative to tic
+        Screen('FillRect',window,black);
+        Screen('FillRect', window, white, tsdstRect);
+        [timestamps(trial,11,block),~,~,~,~] = Screen('Flip', window);
+        soundstamps(trial,11,block) = PsychPortAudio('Start', pahandle, reps, 0, 1);
+        PsychPortAudio('Stop', pahandle);
  
     end    
 end
