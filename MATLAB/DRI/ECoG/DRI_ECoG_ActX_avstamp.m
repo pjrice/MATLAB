@@ -1,3 +1,5 @@
+clear
+
 %DRI paradigm with EMG recordings
 %largely selfpaced, unimanual, abstract other rule
 
@@ -81,7 +83,7 @@ Screen('BlendFunction',window,'GL_SRC_ALPHA','GL_ONE_MINUS_SRC_ALPHA');
 
 %Init audio for timestamping
 % InitializePsychSound
-InitializePsychSound  %arg==1 for really low latency
+InitializePsychSound(1)  %arg==1 for really low latency
 
 soundfilename = 'Z:\Work\UW\projects\DRI\ECoG\1volt.wav';
 [sounddata,soundfreq] = audioread(soundfilename);
