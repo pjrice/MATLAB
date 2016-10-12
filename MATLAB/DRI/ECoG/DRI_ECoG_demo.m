@@ -589,5 +589,3 @@ sca;
 % fclose(udpobj);
 
 clear udpobj
-
-save(filename)

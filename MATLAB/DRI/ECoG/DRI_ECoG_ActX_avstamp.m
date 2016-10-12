@@ -123,6 +123,11 @@ end
 dstRect = [0 0 s1 s2];
 dstRect = CenterRectOnPointd(dstRect, xCenter, yCenter*1.35);
 
+%define timestamping rectangle
+ts_s1 = round(screenXpixels/20);
+tsdstRect = [0 0 ts_s1 ts_s1];
+tsdstRect = CenterRectOnPointd(tsdstRect, screenXpixels-round(ts_s1/2), screenYpixels-round(ts_s1/2));
+
 % Here we check if the image is too big to fit on the screen and abort if
 % it is
 if s1 > screenYpixels || s2 > screenYpixels
@@ -417,6 +422,7 @@ for block = 1:numblocks
             % Draw the fixation point
             Screen('DrawLines', window, fixCoords,...
                 lineWidthPix, white, [xCenter yCenter], 2);
+            Screen('FillRect', window, white, tsdstRect);
             
             %Flip to the screen
             Screen('Flip', window);
