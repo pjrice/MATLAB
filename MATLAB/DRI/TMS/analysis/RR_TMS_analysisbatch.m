@@ -50,6 +50,14 @@ for s = 1:size(ts_cat,4)
 end
 
 %make indicies of individual trial conditions (sym/fin, es/ls/ns, inst/inf)
+% indices of sym/fin trials (data_cat{:,1,:})
+% indices of es/ls/ns trials (data_cat{:,7,:}
+% indices of PMd/Vertex trials (blockid_cat)
+% indices of instr/inf trials (evenoddchooser and mod(data{:,6,:})
+% use intersect() to find shared trials to plot
+
+
+
 %find successful trials and error trials
 
 %make plots along different dimensions of condition space
