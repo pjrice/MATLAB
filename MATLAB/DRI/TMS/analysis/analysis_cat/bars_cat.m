@@ -164,68 +164,66 @@ ruleRT_all = ts_all(:,5) - ts_all(:,4);
 stimRT_all = ts_all(:,9) - ts_all(:,8);
 
 
-ruleRT_means(1,1,1) = nanmean(ruleRT_all(indices{1,1,1}(:)));
-ruleRT_means(1,2,1) = nanmean(ruleRT_all(indices{1,2,1}(:)));
-ruleRT_means(1,3,1) = nanmean(ruleRT_all(indices{1,3,1}(:)));
-ruleRT_means(2,1,1) = nanmean(ruleRT_all(indices{2,1,1}(:)));
-ruleRT_means(2,2,1) = nanmean(ruleRT_all(indices{2,2,1}(:)));
-ruleRT_means(2,3,1) = nanmean(ruleRT_all(indices{2,3,1}(:)));
+ruleRT_means(1,1,1) = mean(ruleRT_all(indices{1,1,1}(:)),'omitnan');
+ruleRT_means(1,2,1) = mean(ruleRT_all(indices{1,2,1}(:)),'omitnan');
+ruleRT_means(1,3,1) = mean(ruleRT_all(indices{1,3,1}(:)),'omitnan');
+ruleRT_means(2,1,1) = mean(ruleRT_all(indices{2,1,1}(:)),'omitnan');
+ruleRT_means(2,2,1) = mean(ruleRT_all(indices{2,2,1}(:)),'omitnan');
+ruleRT_means(2,3,1) = mean(ruleRT_all(indices{2,3,1}(:)),'omitnan');
 
-ruleRT_means(1,1,2) = nanmean(ruleRT_all(indices{1,1,2}(:)));
-ruleRT_means(1,2,2) = nanmean(ruleRT_all(indices{1,2,2}(:)));
-ruleRT_means(1,3,2) = nanmean(ruleRT_all(indices{1,3,2}(:)));
-ruleRT_means(2,1,2) = nanmean(ruleRT_all(indices{2,1,2}(:)));
-ruleRT_means(2,2,2) = nanmean(ruleRT_all(indices{2,2,2}(:)));
-ruleRT_means(2,3,2) = nanmean(ruleRT_all(indices{2,3,2}(:)));
+ruleRT_means(1,1,2) = mean(ruleRT_all(indices{1,1,2}(:)),'omitnan');
+ruleRT_means(1,2,2) = mean(ruleRT_all(indices{1,2,2}(:)),'omitnan');
+ruleRT_means(1,3,2) = mean(ruleRT_all(indices{1,3,2}(:)),'omitnan');
+ruleRT_means(2,1,2) = mean(ruleRT_all(indices{2,1,2}(:)),'omitnan');
+ruleRT_means(2,2,2) = mean(ruleRT_all(indices{2,2,2}(:)),'omitnan');
+ruleRT_means(2,3,2) = mean(ruleRT_all(indices{2,3,2}(:)),'omitnan');
 
-ruleRT_sems(1,1,1) = nanstd(ruleRT_all(indices{1,1,1}(:)))/sqrt(length(ruleRT_all(indices{1,1,1}(:))));
-ruleRT_sems(1,2,1) = nanstd(ruleRT_all(indices{1,2,1}(:)))/sqrt(length(ruleRT_all(indices{1,2,1}(:))));
-ruleRT_sems(1,3,1) = nanstd(ruleRT_all(indices{1,3,1}(:)))/sqrt(length(ruleRT_all(indices{1,3,1}(:))));
-ruleRT_sems(2,1,1) = nanstd(ruleRT_all(indices{2,1,1}(:)))/sqrt(length(ruleRT_all(indices{2,1,1}(:))));
-ruleRT_sems(2,2,1) = nanstd(ruleRT_all(indices{2,2,1}(:)))/sqrt(length(ruleRT_all(indices{2,2,1}(:))));
-ruleRT_sems(2,3,1) = nanstd(ruleRT_all(indices{2,3,1}(:)))/sqrt(length(ruleRT_all(indices{2,3,1}(:))));
+ruleRT_sems(1,1,1) = std(ruleRT_all(indices{1,1,1}(:)),'omitnan')/sqrt(length(ruleRT_all(indices{1,1,1}(:))));
+ruleRT_sems(1,2,1) = std(ruleRT_all(indices{1,2,1}(:)),'omitnan')/sqrt(length(ruleRT_all(indices{1,2,1}(:))));
+ruleRT_sems(1,3,1) = std(ruleRT_all(indices{1,3,1}(:)),'omitnan')/sqrt(length(ruleRT_all(indices{1,3,1}(:))));
+ruleRT_sems(2,1,1) = std(ruleRT_all(indices{2,1,1}(:)),'omitnan')/sqrt(length(ruleRT_all(indices{2,1,1}(:))));
+ruleRT_sems(2,2,1) = std(ruleRT_all(indices{2,2,1}(:)),'omitnan')/sqrt(length(ruleRT_all(indices{2,2,1}(:))));
+ruleRT_sems(2,3,1) = std(ruleRT_all(indices{2,3,1}(:)),'omitnan')/sqrt(length(ruleRT_all(indices{2,3,1}(:))));
 
-ruleRT_sems(1,1,2) = nanstd(ruleRT_all(indices{1,1,2}(:)))/sqrt(length(ruleRT_all(indices{1,1,2}(:))));
-ruleRT_sems(1,2,2) = nanstd(ruleRT_all(indices{1,2,2}(:)))/sqrt(length(ruleRT_all(indices{1,2,2}(:))));
-ruleRT_sems(1,3,2) = nanstd(ruleRT_all(indices{1,3,2}(:)))/sqrt(length(ruleRT_all(indices{1,3,2}(:))));
-ruleRT_sems(2,1,2) = nanstd(ruleRT_all(indices{2,1,2}(:)))/sqrt(length(ruleRT_all(indices{2,1,2}(:))));
-ruleRT_sems(2,2,2) = nanstd(ruleRT_all(indices{2,2,2}(:)))/sqrt(length(ruleRT_all(indices{2,2,2}(:))));
-ruleRT_sems(2,3,2) = nanstd(ruleRT_all(indices{2,3,2}(:)))/sqrt(length(ruleRT_all(indices{2,3,2}(:))));
-
-
+ruleRT_sems(1,1,2) = std(ruleRT_all(indices{1,1,2}(:)),'omitnan')/sqrt(length(ruleRT_all(indices{1,1,2}(:))));
+ruleRT_sems(1,2,2) = std(ruleRT_all(indices{1,2,2}(:)),'omitnan')/sqrt(length(ruleRT_all(indices{1,2,2}(:))));
+ruleRT_sems(1,3,2) = std(ruleRT_all(indices{1,3,2}(:)),'omitnan')/sqrt(length(ruleRT_all(indices{1,3,2}(:))));
+ruleRT_sems(2,1,2) = std(ruleRT_all(indices{2,1,2}(:)),'omitnan')/sqrt(length(ruleRT_all(indices{2,1,2}(:))));
+ruleRT_sems(2,2,2) = std(ruleRT_all(indices{2,2,2}(:)),'omitnan')/sqrt(length(ruleRT_all(indices{2,2,2}(:))));
+ruleRT_sems(2,3,2) = std(ruleRT_all(indices{2,3,2}(:)),'omitnan')/sqrt(length(ruleRT_all(indices{2,3,2}(:))));
 
 
 
-stimRT_means(1,1,1) = nanmean(stimRT_all(indices{1,1,1}(:)));
-stimRT_means(1,2,1) = nanmean(stimRT_all(indices{1,2,1}(:)));
-stimRT_means(1,3,1) = nanmean(stimRT_all(indices{1,3,1}(:)));
-stimRT_means(2,1,1) = nanmean(stimRT_all(indices{2,1,1}(:)));
-stimRT_means(2,2,1) = nanmean(stimRT_all(indices{2,2,1}(:)));
-stimRT_means(2,3,1) = nanmean(stimRT_all(indices{2,3,1}(:)));
 
-stimRT_means(1,1,2) = nanmean(stimRT_all(indices{1,1,2}(:)));
-stimRT_means(1,2,2) = nanmean(stimRT_all(indices{1,2,2}(:)));
-stimRT_means(1,3,2) = nanmean(stimRT_all(indices{1,3,2}(:)));
-stimRT_means(2,1,2) = nanmean(stimRT_all(indices{2,1,2}(:)));
-stimRT_means(2,2,2) = nanmean(stimRT_all(indices{2,2,2}(:)));
-stimRT_means(2,3,2) = nanmean(stimRT_all(indices{2,3,2}(:)));
 
-stimRT_sems(1,1,1) = nanstd(stimRT_all(indices{1,1,1}(:)))/sqrt(length(stimRT_all(indices{1,1,1}(:))));
-stimRT_sems(1,2,1) = nanstd(stimRT_all(indices{1,2,1}(:)))/sqrt(length(stimRT_all(indices{1,2,1}(:))));
-stimRT_sems(1,3,1) = nanstd(stimRT_all(indices{1,3,1}(:)))/sqrt(length(stimRT_all(indices{1,3,1}(:))));
-stimRT_sems(2,1,1) = nanstd(stimRT_all(indices{2,1,1}(:)))/sqrt(length(stimRT_all(indices{2,1,1}(:))));
-stimRT_sems(2,2,1) = nanstd(stimRT_all(indices{2,2,1}(:)))/sqrt(length(stimRT_all(indices{2,2,1}(:))));
-stimRT_sems(2,3,1) = nanstd(stimRT_all(indices{2,3,1}(:)))/sqrt(length(stimRT_all(indices{2,3,1}(:))));
+stimRT_means(1,1,1) = mean(stimRT_all(indices{1,1,1}(:)),'omitnan');
+stimRT_means(1,2,1) = mean(stimRT_all(indices{1,2,1}(:)),'omitnan');
+stimRT_means(1,3,1) = mean(stimRT_all(indices{1,3,1}(:)),'omitnan');
+stimRT_means(2,1,1) = mean(stimRT_all(indices{2,1,1}(:)),'omitnan');
+stimRT_means(2,2,1) = mean(stimRT_all(indices{2,2,1}(:)),'omitnan');
+stimRT_means(2,3,1) = mean(stimRT_all(indices{2,3,1}(:)),'omitnan');
 
-stimRT_sems(1,1,2) = nanstd(stimRT_all(indices{1,1,2}(:)))/sqrt(length(stimRT_all(indices{1,1,2}(:))));
-stimRT_sems(1,2,2) = nanstd(stimRT_all(indices{1,2,2}(:)))/sqrt(length(stimRT_all(indices{1,2,2}(:))));
-stimRT_sems(1,3,2) = nanstd(stimRT_all(indices{1,3,2}(:)))/sqrt(length(stimRT_all(indices{1,3,2}(:))));
-stimRT_sems(2,1,2) = nanstd(stimRT_all(indices{2,1,2}(:)))/sqrt(length(stimRT_all(indices{2,1,2}(:))));
-stimRT_sems(2,2,2) = nanstd(stimRT_all(indices{2,2,2}(:)))/sqrt(length(stimRT_all(indices{2,2,2}(:))));
-stimRT_sems(2,3,2) = nanstd(stimRT_all(indices{2,3,2}(:)))/sqrt(length(stimRT_all(indices{2,3,2}(:))));
+stimRT_means(1,1,2) = mean(stimRT_all(indices{1,1,2}(:)),'omitnan');
+stimRT_means(1,2,2) = mean(stimRT_all(indices{1,2,2}(:)),'omitnan');
+stimRT_means(1,3,2) = mean(stimRT_all(indices{1,3,2}(:)),'omitnan');
+stimRT_means(2,1,2) = mean(stimRT_all(indices{2,1,2}(:)),'omitnan');
+stimRT_means(2,2,2) = mean(stimRT_all(indices{2,2,2}(:)),'omitnan');
+stimRT_means(2,3,2) = mean(stimRT_all(indices{2,3,2}(:)),'omitnan');
 
-ruleRT_control_mean = mean(mean(cruleRT_means));
-stimRT_control_mean = mean(mean(cstimRT_means));
+stimRT_sems(1,1,1) = std(stimRT_all(indices{1,1,1}(:)),'omitnan')/sqrt(length(stimRT_all(indices{1,1,1}(:))));
+stimRT_sems(1,2,1) = std(stimRT_all(indices{1,2,1}(:)),'omitnan')/sqrt(length(stimRT_all(indices{1,2,1}(:))));
+stimRT_sems(1,3,1) = std(stimRT_all(indices{1,3,1}(:)),'omitnan')/sqrt(length(stimRT_all(indices{1,3,1}(:))));
+stimRT_sems(2,1,1) = std(stimRT_all(indices{2,1,1}(:)),'omitnan')/sqrt(length(stimRT_all(indices{2,1,1}(:))));
+stimRT_sems(2,2,1) = std(stimRT_all(indices{2,2,1}(:)),'omitnan')/sqrt(length(stimRT_all(indices{2,2,1}(:))));
+stimRT_sems(2,3,1) = std(stimRT_all(indices{2,3,1}(:)),'omitnan')/sqrt(length(stimRT_all(indices{2,3,1}(:))));
+
+stimRT_sems(1,1,2) = std(stimRT_all(indices{1,1,2}(:)),'omitnan')/sqrt(length(stimRT_all(indices{1,1,2}(:))));
+stimRT_sems(1,2,2) = std(stimRT_all(indices{1,2,2}(:)),'omitnan')/sqrt(length(stimRT_all(indices{1,2,2}(:))));
+stimRT_sems(1,3,2) = std(stimRT_all(indices{1,3,2}(:)),'omitnan')/sqrt(length(stimRT_all(indices{1,3,2}(:))));
+stimRT_sems(2,1,2) = std(stimRT_all(indices{2,1,2}(:)),'omitnan')/sqrt(length(stimRT_all(indices{2,1,2}(:))));
+stimRT_sems(2,2,2) = std(stimRT_all(indices{2,2,2}(:)),'omitnan')/sqrt(length(stimRT_all(indices{2,2,2}(:))));
+stimRT_sems(2,3,2) = std(stimRT_all(indices{2,3,2}(:)),'omitnan')/sqrt(length(stimRT_all(indices{2,3,2}(:))));
+
 
 %side by side plot; rule RTs
 numgroups = 2;
@@ -376,35 +374,39 @@ index{1,2} = find(fuckit_all(:,1)==0 & fuckit_all(:,2)~=2 & fuckit_all(:,3)==1);
 index{2,1} = find(fuckit_all(:,1)==1 & fuckit_all(:,2)==2);
 index{2,2} = find(fuckit_all(:,1)==1 & fuckit_all(:,2)~=2 & fuckit_all(:,3)==1);
 
-cruleRT_means(1,1) = nanmean(ruleRT_all(index{1,1}(:)));
-cruleRT_means(1,2) = nanmean(ruleRT_all(index{1,2}(:)));
-cruleRT_means(2,1) = nanmean(ruleRT_all(index{2,1}(:)));
-cruleRT_means(2,2) = nanmean(ruleRT_all(index{2,2}(:)));
+cruleRT_means(1,1) = mean(ruleRT_all(index{1,1}(:)));
+cruleRT_means(1,2) = mean(ruleRT_all(index{1,2}(:)));
+cruleRT_means(2,1) = mean(ruleRT_all(index{2,1}(:)));
+cruleRT_means(2,2) = mean(ruleRT_all(index{2,2}(:)));
 
-cruleRT_sems(1,1) = nanstd(ruleRT_all(index{1,1}(:)))/sqrt(length(ruleRT_all(index{1,1}(:))));
-cruleRT_sems(1,2) = nanstd(ruleRT_all(index{1,2}(:)))/sqrt(length(ruleRT_all(index{1,2}(:))));
-cruleRT_sems(2,1) = nanstd(ruleRT_all(index{2,1}(:)))/sqrt(length(ruleRT_all(index{2,1}(:))));
-cruleRT_sems(2,2) = nanstd(ruleRT_all(index{2,2}(:)))/sqrt(length(ruleRT_all(index{2,2}(:))));
+cruleRT_sems(1,1) = std(ruleRT_all(index{1,1}(:)))/sqrt(length(ruleRT_all(index{1,1}(:))));
+cruleRT_sems(1,2) = std(ruleRT_all(index{1,2}(:)))/sqrt(length(ruleRT_all(index{1,2}(:))));
+cruleRT_sems(2,1) = std(ruleRT_all(index{2,1}(:)))/sqrt(length(ruleRT_all(index{2,1}(:))));
+cruleRT_sems(2,2) = std(ruleRT_all(index{2,2}(:)))/sqrt(length(ruleRT_all(index{2,2}(:))));
 
-cstimRT_means(1,1) = nanmean(stimRT_all(index{1,1}(:)));
-cstimRT_means(1,2) = nanmean(stimRT_all(index{1,2}(:)));
-cstimRT_means(2,1) = nanmean(stimRT_all(index{2,1}(:)));
-cstimRT_means(2,2) = nanmean(stimRT_all(index{2,2}(:)));
+cstimRT_means(1,1) = mean(stimRT_all(index{1,1}(:)));
+cstimRT_means(1,2) = mean(stimRT_all(index{1,2}(:)));
+cstimRT_means(2,1) = mean(stimRT_all(index{2,1}(:)));
+cstimRT_means(2,2) = mean(stimRT_all(index{2,2}(:)));
 
-cstimRT_sems(1,1) = nanstd(stimRT_all(index{1,1}(:)))/sqrt(length(stimRT_all(index{1,1}(:))));
-cstimRT_sems(1,2) = nanstd(stimRT_all(index{1,2}(:)))/sqrt(length(stimRT_all(index{1,2}(:))));
-cstimRT_sems(2,1) = nanstd(stimRT_all(index{2,1}(:)))/sqrt(length(stimRT_all(index{2,1}(:))));
-cstimRT_sems(2,2) = nanstd(stimRT_all(index{2,2}(:)))/sqrt(length(stimRT_all(index{2,2}(:))));
+cstimRT_sems(1,1) = std(stimRT_all(index{1,1}(:)))/sqrt(length(stimRT_all(index{1,1}(:))));
+cstimRT_sems(1,2) = std(stimRT_all(index{1,2}(:)))/sqrt(length(stimRT_all(index{1,2}(:))));
+cstimRT_sems(2,1) = std(stimRT_all(index{2,1}(:)))/sqrt(length(stimRT_all(index{2,1}(:))));
+cstimRT_sems(2,2) = std(stimRT_all(index{2,2}(:)))/sqrt(length(stimRT_all(index{2,2}(:))));
 
-cerrors_means(1,1) = nanmean(errors_all(index{1,1}(:)));
-cerrors_means(1,2) = nanmean(errors_all(index{1,2}(:)));
-cerrors_means(2,1) = nanmean(errors_all(index{2,1}(:)));
-cerrors_means(2,2) = nanmean(errors_all(index{2,2}(:)));
+cerrors_means(1,1) = mean(errors_all(index{1,1}(:)));
+cerrors_means(1,2) = mean(errors_all(index{1,2}(:)));
+cerrors_means(2,1) = mean(errors_all(index{2,1}(:)));
+cerrors_means(2,2) = mean(errors_all(index{2,2}(:)));
 
-cerrors_sems(1,1) = nanstd(errors_all(index{1,1}(:)))/sqrt(length(errors_all(index{1,1}(:))));
-cerrors_sems(1,2) = nanstd(errors_all(index{1,2}(:)))/sqrt(length(errors_all(index{1,2}(:))));
-cerrors_sems(2,1) = nanstd(errors_all(index{2,1}(:)))/sqrt(length(errors_all(index{2,1}(:))));
-cerrors_sems(2,2) = nanstd(errors_all(index{2,2}(:)))/sqrt(length(errors_all(index{2,2}(:))));
+cerrors_sems(1,1) = std(errors_all(index{1,1}(:)))/sqrt(length(errors_all(index{1,1}(:))));
+cerrors_sems(1,2) = std(errors_all(index{1,2}(:)))/sqrt(length(errors_all(index{1,2}(:))));
+cerrors_sems(2,1) = std(errors_all(index{2,1}(:)))/sqrt(length(errors_all(index{2,1}(:))));
+cerrors_sems(2,2) = std(errors_all(index{2,2}(:)))/sqrt(length(errors_all(index{2,2}(:))));
+
+
+ruleRT_control_mean = mean(mean(cruleRT_means));
+stimRT_control_mean = mean(mean(cstimRT_means));
 
 
 numgroups = 2;
