@@ -1,4 +1,4 @@
-function RR_TMS_catcat(datapath)
+function y = RR_TMS_catcat(datapath)
 
 cd(datapath)
 
@@ -15,13 +15,13 @@ for ff = 1:length(filelist)
     ss_time_cat(ff,:) = ss_time;
     
     %trials x (condMatrix)(rpspns)(block#) x subject
-    fuckit(:,1,ff) = cat(1,data{:,1});
-    fuckit(:,2,ff) = cat(1,data{:,7});
-    fuckit(:,3,ff) = cat(1,data{:,9});
+%     fuckit(:,1,ff) = cat(1,data{:,1});
+%     fuckit(:,2,ff) = cat(1,data{:,7});
+%     fuckit(:,3,ff) = cat(1,data{:,9});
     
     blockid_cat(:,ff) = blockid;
     
-    clearvars -except filelist ff emg_cat ts_cat data_cat ss_time_cat fuckit blockid_cat
+    clearvars -except filelist ff emg_cat ts_cat data_cat ss_time_cat fuckit blockid_cat datapath
     
 end
 
@@ -29,5 +29,7 @@ blockid_cat = reshape(blockid_cat,ff*240,1);
 
 clear ff
 
-filename = 'cat_cat';
+filename = strcat(datapath,'\RR_TMS_subjcat.mat');
 save(filename,'-v7.3')
+
+y = filename;

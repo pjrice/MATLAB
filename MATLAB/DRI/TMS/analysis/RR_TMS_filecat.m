@@ -2,8 +2,8 @@ function file_cat(datapath, subj_folder)
 
 %function to concatenate individual block files for a given RR_TMS subject
 
-cd(strcat(datapath, '\', subj_folders(i).name))
-disp(strcat('Folder is subject =',subj_folders(i).name))
+cd(strcat(datapath, '\', subj_folder))
+disp(strcat('Folder is subject =',subj_folder))
 
 files = dir('*.mat');
 
@@ -32,7 +32,7 @@ for f = 1:length(s)
     filenames{f} = filename;
     
     
-    clearvars -except files s f emg ts data ss_time filenames b
+    clearvars -except files s f emg ts data ss_time filenames b datapath subj_folder
 end
 
 if b=='y'
@@ -51,6 +51,6 @@ end
 
 clear b
 
-filename = 'Z:\data\RR_TMS\good_subjects';
+filename = strcat(datapath, '\', subj_folder,'cat.mat');
 save(filename)
     
