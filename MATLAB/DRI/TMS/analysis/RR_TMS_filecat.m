@@ -1,4 +1,4 @@
-function file_cat(datapath, subj_folder)
+function RR_TMS_filecat(datapath, subj_folder)
 
 %function to concatenate individual block files for a given RR_TMS subject
 
@@ -18,7 +18,7 @@ for f = 1:length(s)
     load(files(s(f)).name, 'adblData_mat', 'timestamps', 'condMatrix','evenoddchooser','fingerchooser','symbolchooser','abchooser','stim','streamstart_time','filename', 'rpspns', 'subj_resp')
     
     emg(:,f) = adblData_mat;
-    ts(:,:,f) = timestamps;
+    timestamps(:,:,f) = timestamps;
     data{f,1} = condMatrix;
     data{f,2} = evenoddchooser;
     data{f,3} = fingerchooser;
@@ -31,22 +31,42 @@ for f = 1:length(s)
     ss_time(f) = streamstart_time;
     filenames{f} = filename;
     
+    if b=='y' 
+        
+%         a = [0 1 0 1];
+%         blockid = repmat(a,60,1);
+%         blockid = reshape(blockid,240,1);
+        
+        if mod(f,2)==1
     
-    clearvars -except files s f emg ts data ss_time filenames b datapath subj_folder
-end
-
-if b=='y'
-
-    a = [0 1 0 1];
-    blockid = repmat(a,60,1);
-    blockid = reshape(blockid,240,1);
+            a = 0; %PMd on odd blocks
+            
+        else
+            
+            a=1;  %Vertex on even blocks
+            
+        end
+             
+    else
+        
+%         a = [1 0 1 0];
+%         blockid = repmat(a,60,1);
+%         blockid = reshape(blockid,240,1);
+        
+        if mod(f,2)==1
+            
+            a = 1; %Vertex on odd blocks
+            
+        else
+            
+            a = 0;  %PMd on even blocks
+            
+        end
+        
+    end
+    data{f,10} = repmat(a,60,1);
     
-else
-
-    a = [1 0 1 0];
-    blockid = repmat(a,60,1);
-    blockid = reshape(blockid,240,1);
-    
+    clearvars -except files s f emg timestamps data ss_time filenames b datapath subj_folder
 end
 
 clear b
