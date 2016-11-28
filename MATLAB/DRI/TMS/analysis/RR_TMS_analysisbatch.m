@@ -62,6 +62,11 @@ end
 %convert into 0/1 in order to compare
 
 evenodd = cell(size(data_cat,1),size(data_cat,3));
+evenodd_stim = cell(size(data_cat,1),size(data_cat,3));
+finger = cell(size(data_cat,1),size(data_cat,3));
+symbol = cell(size(data_cat,1),size(data_cat,3));
+ab = cell(size(data_cat,1),size(data_cat,3));
+subj_resp = cell(size(data_cat,1),size(data_cat,3));
 
 for s = 1:size(data_cat,3)
     
@@ -71,20 +76,22 @@ for s = 1:size(data_cat,3)
         evenodd{b,s}(:,2) = [];
         evenodd{b,s} = evenodd{b,s}-1; %0==Even; 1==Odd
         
-    end
-end
-
-%data{1,6,1} for actual stimulus number
-%do the mod trick to determine even/odd
-
-evenodd_stim = cell(size(data_cat,1),size(data_cat,3));
-
-for s = 1:size(data_cat,3)
-    
-    for b = 1:size(data_cat,1)
-        
         evenodd_stim{b,s} = data_cat{b,6,s};
         evenodd_stim{b,s} = mod(evenodd_stim{b,s},2); %0==Even; 1==Odd
+        
+        finger{b,s} = cell2mat(data_cat{b,3,s});
+        finger{b,s}(:,2) = [];
+        finger{b,s} = finger{b,s}-1; %0==Index; 1==Middle
+        
+        symbol{b,s} = cell2mat(data_cat{b,4,s});
+        symbol{b,s}(:,2) = [];
+        symbol{b,s} = symbol{b,s}-1; %0==Index; 1==Middle
+        
+        ab{b,s} = cell2mat(data_cat{b,4,s});
+        ab{b,s}(:,2) = [];
+        ab{b,s} = ab{b,s}-1; %0==Index; 1==Middle
+        
+        subj_resp{b,s} = data_cat{b,8,s};
         
     end
 end
@@ -146,68 +153,27 @@ for s = 1:size(ts_cat,4) %by subjects
     end
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% use RR_TMS_intersect() to find shared trials to plot
+%script to get the correct answer for every trial
+RR_TMS_correctans
 
+%compares correct answers to subject answers to determine success rates
+success = cellfun(@(x,y) strcmp(x,y), correctans, subj_resp, 'UniformOutput', false);
 
-%find successful trials and error trials
-%aka have to figure out what the answer should have been, and compare that
-%to the answer given
+%quick metrics? (Success rate by subject, by PMd/Vertex, etc...)
 
-%whether even or odd was presented already determined in:
-%evenodd %0==Even; 1==Odd
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%whether the stimulus was even or odd was already determined in:
-%evenodd_stim %0==Even; 1==Odd
+%use RR_TMS_intersect() to get trial number indices of condition combos
 
-%determine whether index or middle finger was displayed for finger trials
-finger = cell(size(data_cat,1),size(data_cat,3));
+%RR_TMS_intersect() is bad and doesn't really do what we want; redesign
 
-for s = 1:size(data_cat,3)
-    
-    for b = 1:size(data_cat,1)
-        
-        finger{b,s} = cell2mat(data_cat{b,3,s});
-        finger{b,s}(:,2) = [];
-        finger{b,s} = finger{b,s}-1; %0==Index; 1==Middle
-        
-    end
-end
-
-%determine whether A or B was displayed for symbol trials
-symbol = cell(size(data_cat,1),size(data_cat,3));
-
-for s = 1:size(data_cat,3)
-    
-    for b = 1:size(data_cat,1)
-        
-        symbol{b,s} = cell2mat(data_cat{b,4,s});
-        symbol{b,s}(:,2) = [];
-        symbol{b,s} = symbol{b,s}-1; %0==Index; 1==Middle
-        
-    end
-end
-
-%determine whether A was on left or right side
-ab = cell(size(data_cat,1),size(data_cat,3));
-
-for s = 1:size(data_cat,3)
-    
-    for b = 1:size(data_cat,1)
-        
-        ab{b,s} = cell2mat(data_cat{b,4,s});
-        ab{b,s}(:,2) = [];
-        ab{b,s} = ab{b,s}-1; %0==Index; 1==Middle
-        
-    end
-end
-
-
-
-
-
-
-%mask error trials to make RT plots
+[~,~,~,~,~,~,~,~,~,~,tester] = RR_TMS_intersect(s_trials, ls_trials, pmd_trials, inf_trials);
+%mask error trials by NaNing them (or successful trials if you want to look
+%at errors)
+%get means with the NaNed RT data, indexing with intersects
+%plot means
 
 
 
