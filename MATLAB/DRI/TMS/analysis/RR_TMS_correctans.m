@@ -91,7 +91,56 @@ fincond_clabel{8,2} = 'R';
 %by block, so you can make the test rows out of the resultant matrices
 
 
+for s = 1:size(data_cat,3)  %by subjects
+    
+    for b = 1:size(data_cat,1)  %by blocks
+        
+        for t = 1:size(data_cat{1,1,1})  %by trials
+            
+            if data_cat{b,1,s}(t)==0  %check whether trial was symbol or finger condition in order to cat the right info together
+                
+                %let's assume 0 is symbols
+                
+                %make the row vector of the trial's conditions
+                trial_conds = [evenodd{b,s}(t),symbol{b,s}(t),ab{b,s}(t),evenodd_stim{b,s}(t)];
+                
+                
+                %compare it to "bitrows" key to find the proper answer
+                %should spit out a number 1-16: row of the trial condition
+                answer_index = ismember(symcond_combos,trial_conds,'rows');
+                
+                correctans{b,s}(t) = symcond_clabel(answer_index,2);
+                
+            else
+                
+                %let's assume 1 is fingers
+                
+                %make row vector of trial's conditions
+                trial_conds = [evenodd{b,s}(t),finger{b,s}(t),evenodd_stim{b,s}(t)];
+                
+                %compare it to "bitrows" key to find the proper answer
+                %should spit out a number 1-16: row of the trial condition
+                answer_index = ismember(fincond_combos,trialconds,'rows');
+                
+                correctans{b,s}(t) = fincond_clabel(answer_index,2);
+                
+            end
+            
+            clear trial_conds answer_index
+            
+        end
+    end
+end
 
+%use strcmp to check correct answers against given answers
+        
+        
+        
+        
+        
+        
+        
+        
 
 
 

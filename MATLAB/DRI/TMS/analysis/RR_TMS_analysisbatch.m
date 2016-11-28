@@ -218,8 +218,22 @@ end
 %condition space 4d (es/ls/ns X PMd/Vertex X sym/fin X inst/inf)
 %3d bar plot?
 %es/ls/ns X PMd/Vertex X inst/inf; es/ls/ns X PMd/Vertex X sym/fin; 
-%sym/fin X instr/inf X PMd/Vertex; etc etc etc... 
+%sym/fin X instr/inf X PMd/Vertex; es/ls/ns X sym/fin X inst/inf
 
 %after those made, get differences between conditions to reduce
 %dimensionality and make more sensible plots (or just do this first??? but
 %it would be helpful to see the plots to make the differences)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
