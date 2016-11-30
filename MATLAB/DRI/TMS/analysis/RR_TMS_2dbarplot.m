@@ -16,6 +16,8 @@ if nargin < 7
     
 end
 
+ylimit = 3.0;
+
 %blank either error or success trials
 %since 1 indexes successes in err_trial_idx input, invert to plot them
 if a==1
@@ -114,10 +116,11 @@ end
 %this is bullshit but I'm tired
 
 %inferred plots
+figure(1)
 h1 = subplot(1,3,1);
 subplot(1,3,1),bar([RT_means(3,1) RT_means(6,1); RT_means(9,1) RT_means(12,1)])
 h1.Children(1).BarWidth = 1;
-h1.YLim = [0 1.5];
+h1.YLim = [0 ylimit];
 h1.YTick = [0:0.1:1.5];
 hold on
 h1.YLabel.String = 'Response time (ms)';
@@ -128,7 +131,7 @@ errorbar(x, [RT_means(3,1) RT_means(6,1); RT_means(9,1) RT_means(12,1)], [RT_sem
 h2 = subplot(1,3,2);
 subplot(1,3,2),bar([RT_means(1,1) RT_means(4,1); RT_means(7,1) RT_means(10,1)])
 h2.Children(1).BarWidth = 1;
-h2.YLim = [0 1.5];
+h2.YLim = [0 ylimit];
 h2.YTick = [0:0.1:1.5];
 hold on
 h2.XTickLabel = {'S','F'};
@@ -138,20 +141,32 @@ errorbar(x, [RT_means(1,1) RT_means(4,1); RT_means(7,1) RT_means(10,1)], [RT_sem
 h3 = subplot(1,3,3);
 subplot(1,3,3),bar([RT_means(2,1) RT_means(5,1); RT_means(8,1) RT_means(11,1)])
 h3.Children(1).BarWidth = 1;
-h3.YLim = [0 1.5];
+h3.YLim = [0 ylimit];
 h3.YTick = [0:0.1:1.5];
 hold on
-% plot(xlim, [ruleRT_control_mean ruleRT_control_mean],'r')
 h3.YLabel.String = 'Response time (ms)';
 h3.XTickLabel = {'S','F'};
 h3.Title.String = 'late stim';
 errorbar(x, [RT_means(2,1) RT_means(5,1); RT_means(8,1) RT_means(11,1)], [RT_sems(2,1) RT_sems(5,1); RT_sems(8,1) RT_sems(11,1)], 'k', 'linestyle', 'none');
 
+lh = legend('PMd','Vertex');
+lh.Position = [0.4939 0.0654 0.0474 0.0395];
+
+%set global title
+set(gcf,'NextPlot','add');
+axes;
+htitle = title(sprintf('Stim RTs, inferred. n = %d',s));
+set(gca,'Visible','off');
+set(htitle,'Visible','on');
+htitle.Position = [0.5 1.04 0.5];
+
+
 %instructed plots
+figure(2)
 h1 = subplot(1,3,1);
 subplot(1,3,1),bar([RT_means(3,2) RT_means(6,2); RT_means(9,2) RT_means(12,2)])
 h1.Children(1).BarWidth = 1;
-h1.YLim = [0 1.5];
+h1.YLim = [0 ylimit];
 h1.YTick = [0:0.1:1.5];
 hold on
 h1.YLabel.String = 'Response time (ms)';
@@ -162,7 +177,7 @@ errorbar(x, [RT_means(3,2) RT_means(6,2); RT_means(9,2) RT_means(12,2)], [RT_sem
 h2 = subplot(1,3,2);
 subplot(1,3,2),bar([RT_means(1,2) RT_means(4,2); RT_means(7,2) RT_means(10,2)])
 h2.Children(1).BarWidth = 1;
-h2.YLim = [0 1.5];
+h2.YLim = [0 ylimit];
 h2.YTick = [0:0.1:1.5];
 hold on
 h2.XTickLabel = {'S','F'};
@@ -172,16 +187,24 @@ errorbar(x, [RT_means(1,2) RT_means(4,2); RT_means(7,2) RT_means(10,2)], [RT_sem
 h3 = subplot(1,3,3);
 subplot(1,3,3),bar([RT_means(2,2) RT_means(5,2); RT_means(8,2) RT_means(11,2)])
 h3.Children(1).BarWidth = 1;
-h3.YLim = [0 1.5];
+h3.YLim = [0 ylimit];
 h3.YTick = [0:0.1:1.5];
 hold on
-% plot(xlim, [ruleRT_control_mean ruleRT_control_mean],'r')
 h3.YLabel.String = 'Response time (ms)';
 h3.XTickLabel = {'S','F'};
 h3.Title.String = 'late stim';
 errorbar(x, [RT_means(2,2) RT_means(5,2); RT_means(8,2) RT_means(11,2)], [RT_sems(2,2) RT_sems(5,2); RT_sems(8,2) RT_sems(11,2)], 'k', 'linestyle', 'none');
 
+lh = legend('PMd','Vertex');
+lh.Position = [0.4939 0.0654 0.0474 0.0395];
 
+%set global title
+set(gcf,'NextPlot','add');
+axes;
+htitle = title(sprintf('Stim RTs, instructed. n = %d',s));
+set(gca,'Visible','off');
+set(htitle,'Visible','on');
+htitle.Position = [0.5 1.04 0.5];
 
 
 
