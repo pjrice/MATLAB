@@ -178,6 +178,11 @@ success = cellfun(@(x,y) strcmp(x,y), correctans, subj_resp, 'UniformOutput', fa
 %dimensionality and make more sensible plots (or just do this first??? but
 %it would be helpful to see the plots to make the differences)
 
+%TODO
+%error rates
+%RT differences
+%skip beginning if file exists
+
 
 
 
