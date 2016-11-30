@@ -102,57 +102,6 @@ inst_inf = cellfun(@(x,y) eq(x,y), evenodd, evenodd_stim, 'UniformOutput', false
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %make indicies of individual trial conditions (sym/fin, es/ls/ns, inst/inf)
-% s_trials = nan(size(ts_cat,1)/length(unique([data_cat{:,1,1}])),size(ts_cat,3),size(ts_cat,4));
-% f_trials = nan(size(ts_cat,1)/length(unique([data_cat{:,1,1}])),size(ts_cat,3),size(ts_cat,4));
-% es_trials = nan(size(ts_cat,1)/length(unique([data_cat{:,7,1}])),size(ts_cat,3),size(ts_cat,4));
-% ls_trials = nan(size(ts_cat,1)/length(unique([data_cat{:,7,1}])),size(ts_cat,3),size(ts_cat,4));
-% ns_trials = nan(size(ts_cat,1)/length(unique([data_cat{:,7,1}])),size(ts_cat,3),size(ts_cat,4));
-% pmd_trials = nan(size(ts_cat,1),size(ts_cat,3),size(ts_cat,4));
-% ver_trials = nan(size(ts_cat,1),size(ts_cat,3),size(ts_cat,4));
-% inf_trials = nan(size(ts_cat,1),size(ts_cat,3),size(ts_cat,4));
-% ins_trials = nan(size(ts_cat,1),size(ts_cat,3),size(ts_cat,4));
-% 
-% for s = 1:size(ts_cat,4) %by subjects
-%     
-%     for i = 1:size(ts_cat,3) %by blocks
-%         
-%         %indices of sym/fin trials (data_cat{:,1,:})
-%         %trials x blocks x subjects
-%         s_trials(:,i,s) = find(data_cat{i,1,s}==0);  %symbol trial index
-%         f_trials(:,i,s) = find(data_cat{i,1,s}==1);  %finger trial index
-%         
-%         %indices of es/ls/ns trials (data_cat{:,7,:})
-%         %trials x blocks x subjects
-%         es_trials(:,i,s) = find(data_cat{i,7,s}==0); %early stim trials index
-%         ls_trials(:,i,s) = find(data_cat{i,7,s}==1);  %late stim trials index
-%         ns_trials(:,i,s) = find(data_cat{i,7,s}==2);  %no stim trials index
-%         
-%         %indices of PMd/Vertex trials (data_cat{:,10,:})
-%         %trials x blocks x subjects
-%         if isempty(find(data_cat{i,10,s}==0)) %#ok<EFIND>
-%             
-%             pmd_trials(:,i,s) = nan(size(ts_cat,1),1);
-%             ver_trials(:,i,s) = find(data_cat{i,10,s}==1);
-%             
-%         else
-%             
-%             pmd_trials(:,i,s) = find(data_cat{i,10,s}==0);
-%             ver_trials(:,i,s) = nan(size(ts_cat,1),1);
-%             
-%         end
-%         
-%         %indices of instr/inf trials (evenoddchooser and mod(data{:,6,:})
-%         inf_ph = find(inst_inf{i,s}==0);  %inferred trials index
-%         ins_ph = find(inst_inf{i,s}==1);  %instructed trials index
-%         
-%         inf_trials(1:length(inf_ph),i,s) = inf_ph;  %inferred trials index
-%         ins_trials(1:length(ins_ph),i,s) = ins_ph;  %instructed trials index
-%         
-%         clear inf_ph ins_ph
-%           
-%     end
-% end
-
 sf_trials = cell(size(data_cat,1),size(data_cat,3),length(unique([data_cat{:,1,1}])));
 eslsns_trials = cell(size(data_cat,1),size(data_cat,3),length(unique([data_cat{:,7,1}])));
 pmdver_trials = cell(size(data_cat,1),size(data_cat,3),length(unique([data_cat{:,10,1}])));
@@ -211,17 +160,6 @@ success = cellfun(@(x,y) strcmp(x,y), correctans, subj_resp, 'UniformOutput', fa
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%use RR_TMS_intersect() to get trial number indices of condition combos
-
-%RR_TMS_intersect() is bad and doesn't really do what we want; redesign
-[~,~,~,~,~,~,~,~,~,~,tester] = RR_TMS_intersect(s_trials, ls_trials, pmd_trials, inf_trials);
-
-
-%mask error trials by NaNing them (or successful trials if you want to look
-%at errors)
-%get means with the NaNed RT data, indexing with intersects
-%plot means
-
 %function idea: RR_TMS_3dbarplot() takes at least 2 required arguments (trial
 %indices for 2 conditions) and a paired optional argument (error trial
 %index, and string flag to plot successful trials or error trials)
@@ -235,11 +173,6 @@ success = cellfun(@(x,y) strcmp(x,y), correctans, subj_resp, 'UniformOutput', fa
 
 
 
-%make plots along different dimensions of condition space
-%condition space 4d (es/ls/ns X PMd/Vertex X sym/fin X inst/inf)
-%3d bar plot?
-%es/ls/ns X PMd/Vertex X inst/inf; es/ls/ns X PMd/Vertex X sym/fin; 
-%sym/fin X instr/inf X PMd/Vertex; es/ls/ns X sym/fin X inst/inf
 
 %after those made, get differences between conditions to reduce
 %dimensionality and make more sensible plots (or just do this first??? but
