@@ -68,9 +68,9 @@ symbol = cell(size(data_cat,1),size(data_cat,3));
 ab = cell(size(data_cat,1),size(data_cat,3));
 subj_resp = cell(size(data_cat,1),size(data_cat,3));
 
-for s = 1:size(data_cat,3)
+for s = 1:size(data_cat,3)  %by subjects
     
-    for b = 1:size(data_cat,1)
+    for b = 1:size(data_cat,1)  %by blocks
         
         evenodd{b,s} = cell2mat(data_cat{b,2,s});
         evenodd{b,s}(:,2) = [];

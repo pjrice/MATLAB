@@ -18,7 +18,7 @@ for f = 1:length(s)
     load(files(s(f)).name, 'adblData_mat', 'timestamps', 'condMatrix','evenoddchooser','fingerchooser','symbolchooser','abchooser','stim','streamstart_time','filename', 'rpspns', 'subj_resp')
     
     emg(:,f) = adblData_mat;
-    timestamps(:,:,f) = timestamps;
+    ts_blocks(:,:,f) = timestamps;
     data{f,1} = condMatrix;
     data{f,2} = evenoddchooser;
     data{f,3} = fingerchooser;
@@ -66,7 +66,7 @@ for f = 1:length(s)
     end
     data{f,10} = repmat(a,60,1);
     
-    clearvars -except files s f emg timestamps data ss_time filenames b datapath subj_folder
+    clearvars -except files s f emg ts_blocks data ss_time filenames b datapath subj_folder
 end
 
 clear b

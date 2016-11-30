@@ -10,7 +10,7 @@ for ff = 1:length(filelist)
     load(filelist(ff).name)
     
     emg_cat(:,:,ff) = emg;
-    ts_cat(:,:,:,ff) = timestamps;
+    ts_cat(:,:,:,ff) = ts_blocks;
     data_cat(:,:,ff) = data;
     ss_time_cat(ff,:) = ss_time;
     
