@@ -179,6 +179,7 @@ success = cellfun(@(x,y) strcmp(x,y), correctans, subj_resp, 'UniformOutput', fa
 %it would be helpful to see the plots to make the differences)
 
 %TODO
+%distributions of RTs
 %error rates
 %RT differences
 %skip beginning if file exists
