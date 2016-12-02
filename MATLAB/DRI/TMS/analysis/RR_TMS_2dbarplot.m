@@ -101,6 +101,14 @@ for i = 1:size(c1234,1)  %by number of condition combos
     end
 end
 
+%remove the NaNs so you get the right error bars
+for i = 1:length(RTs_bycond)
+    
+    RTs_bycond{i,1}(isnan(RTs_bycond{i,1})) = [];
+    RTs_bycond{i,2}(isnan(RTs_bycond{i,2})) = [];
+    
+end
+
 RT_means = cellfun(@(x) mean(x,'omitnan'), RTs_bycond);
 RT_sems = cellfun(@(x) sem(x), RTs_bycond);
 
