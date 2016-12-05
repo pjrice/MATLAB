@@ -181,6 +181,7 @@ success = cellfun(@(x,y) strcmp(x,y), correctans, subj_resp, 'UniformOutput', fa
 %TODO
 %what goes fucky with the ruleRT finger trial filtering? Very few values
 %A left/ A right trial index and resultant mean RTs
+%bootstrap trials
 %distributions of RTs
 %error rates
 %RT differences
