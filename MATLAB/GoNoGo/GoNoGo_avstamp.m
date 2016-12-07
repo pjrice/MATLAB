@@ -1,9 +1,9 @@
 clear
 
 %filename?
-% filename = 'C:\temp_patrick\data\semantics\';
-% filename_append = input('Filename? ','s');
-% filename = strcat(filename,filename_append);
+filename = 'C:\temp_patrick\data\semantics\';
+filename_append = input('Filename? ','s');
+filename = strcat(filename,filename_append);
 
 %base path for images?
 imgbasepath = 'Z:\Work\UW\projects\GoNoGo\stimuli\';
@@ -126,8 +126,8 @@ end
 %                       Trial information
 %----------------------------------------------------------------------
 
-numtrials = 7;
-numblocks = 7;
+numtrials = 13;
+numblocks = 8;
 % numblocks = 7;
 
 %init data matrices
