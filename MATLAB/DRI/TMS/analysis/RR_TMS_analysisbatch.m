@@ -85,11 +85,11 @@ for s = 1:size(data_cat,3)  %by subjects
         
         symbol{b,s} = cell2mat(data_cat{b,4,s});
         symbol{b,s}(:,2) = [];
-        symbol{b,s} = symbol{b,s}-1; %0==Index; 1==Middle
+        symbol{b,s} = symbol{b,s}-1; %0==A; 1==B
         
-        ab{b,s} = cell2mat(data_cat{b,4,s});
+        ab{b,s} = cell2mat(data_cat{b,5,s});
         ab{b,s}(:,2) = [];
-        ab{b,s} = ab{b,s}-1; %0==Index; 1==Middle
+        ab{b,s} = ab{b,s}-1; %0==A was on left; 1==A was on right
         
         subj_resp{b,s} = data_cat{b,8,s};
         
@@ -179,6 +179,7 @@ success = cellfun(@(x,y) strcmp(x,y), correctans, subj_resp, 'UniformOutput', fa
 %it would be helpful to see the plots to make the differences)
 
 %TODO
+%FIX SEM CALCULATION
 %what goes fucky with the ruleRT finger trial filtering? Very few values
 %A left/ A right trial index and resultant mean RTs
 %bootstrap trials
