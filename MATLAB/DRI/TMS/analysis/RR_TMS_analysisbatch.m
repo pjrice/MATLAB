@@ -142,7 +142,7 @@ for s = 1:size(ts_cat,4) %by subjects
         
         infins_trials{i,s,1} = inf_ph;  %inferred trials index
         infins_trials{i,s,2} = ins_ph;  %instructed trials index
-        
+
         clear inf_ph ins_ph
           
     end

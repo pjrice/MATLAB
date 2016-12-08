@@ -1,4 +1,4 @@
-function RR_TMS_2dbarplot(cond1,cond2,cond3,cond4,RTs,err_trial_idx,a)
+function RR_TMS_2dbarplot(c1234,RTs,err_trial_idx,a)
 
 %generate 2 x three subplots 2d paired bar plots
 %in each plot, there are 2 groups of 2 bars each
@@ -8,15 +8,22 @@ function RR_TMS_2dbarplot(cond1,cond2,cond3,cond4,RTs,err_trial_idx,a)
 %each bar in a group is data from stim area condition (PMd/Ver)
 
 % Argument management:
-% arg7 is optional, assumes to plot success trials
-% arg1/2/3/4/5/6 are mandatory
-if nargin < 7
+% arg4 is optional, assumes to plot success trials
+% arg1/2/3 are mandatory
+if nargin < 4
     
     a = 1;  %plot success trials
     
 end
 
-ylimit = 1.5;
+%set plot ylims depending on error or success
+if a==1
+    ylimit = 1.5;
+elseif a==0 
+    ylimit = 3.0;
+else   
+    error('Ya done fucked up - plot successful or error trials?')   
+end
 
 %blank either error or success trials
 %since 1 indexes successes in err_trial_idx input, invert to plot them
@@ -27,63 +34,63 @@ if a==1
 end
 
 %now NaN the indexed trials
-for s = 1:size(cond1,2)  %by subjects
+for s = 1:size(c1234{1,1},2)  %by subjects
     
-    for b = 1:size(cond1,1)  %by blocks
+    for b = 1:size(c1234{1,1},1)  %by blocks
         
         RTs(err_trial_idx{b,s},b,s) = NaN;
         
     end
 end
 
-%just intersect each page to eventually get fully intersected indices
-track=1;
-for c1 = 1:size(cond1,3)
-    
-    for c2 = 1:size(cond2,3)
-        
-        c12{track,1} = cellfun(@(x,y) intersect(x,y), cond1(:,:,c1), cond2(:,:,c2), 'UniformOutput', false);
-        
-        track = track+1;
-        
-    end
-end
-
-track=1;
-for c12i = 1:size(c12,1)  
-    
-    for c3 = 1:size(cond3,3)
-        
-        c123{track,1} = cellfun(@(x,y) intersect(x,y), cond3(:,:,c3), c12{c12i,1}, 'UniformOutput', false);
-        
-        track = track+1;
-    end
-end
-
-
-%c1234: columns are inferred/instructed
-%rows:
-%1. S-P-E
-%2. S-P-L
-%3. S-P-N
-%4. S-V-E
-%5. S-V-L
-%6. S-V-N
-%7. F-P-E
-%8. F-P-L
-%9. F-P-N
-%10. F-V-E
-%11. F-V-L
-%12. F-V-N
-for c4 = 1:size(cond4,3)
-    
-    for c123i = 1:size(c123,1)
-        
-        c1234{c123i,c4} = cellfun(@(x,y) intersect(x,y), cond4(:,:,c4),c123{c123i,1}, 'UniformOutput', false);
-        
-    end
-end
-        
+% %just intersect each page to eventually get fully intersected indices
+% track=1;
+% for c1 = 1:size(cond1,3)
+%     
+%     for c2 = 1:size(cond2,3)
+%         
+%         c12{track,1} = cellfun(@(x,y) intersect(x,y), cond1(:,:,c1), cond2(:,:,c2), 'UniformOutput', false);
+%         
+%         track = track+1;
+%         
+%     end
+% end
+% 
+% track=1;
+% for c12i = 1:size(c12,1)  
+%     
+%     for c3 = 1:size(cond3,3)
+%         
+%         c123{track,1} = cellfun(@(x,y) intersect(x,y), cond3(:,:,c3), c12{c12i,1}, 'UniformOutput', false);
+%         
+%         track = track+1;
+%     end
+% end
+% 
+% 
+% %c1234: columns are inferred/instructed
+% %rows:
+% %1. S-P-E
+% %2. S-P-L
+% %3. S-P-N
+% %4. S-V-E
+% %5. S-V-L
+% %6. S-V-N
+% %7. F-P-E
+% %8. F-P-L
+% %9. F-P-N
+% %10. F-V-E
+% %11. F-V-L
+% %12. F-V-N
+% for c4 = 1:size(cond4,3)
+%     
+%     for c123i = 1:size(c123,1)
+%         
+%         c1234{c123i,c4} = cellfun(@(x,y) intersect(x,y), cond4(:,:,c4),c123{c123i,1}, 'UniformOutput', false);
+%         
+%     end
+% end
+%         
       
 %get means for the conditions
 RTs_bycondbysubj = cell(size(c1234));
@@ -91,9 +98,9 @@ for i = 1:size(c1234,1)  %by number of condition combos
     
     for ii = 1:size(c1234,2)  %by inf/ins
         
-        for s = 1:size(cond1,2)  %by subjects
+        for s = 1:size(c1234{1,1},2)  %by subjects
             
-            for b = 1:size(cond1,1)  %by blocks
+            for b = 1:size(c1234{1,1},1)  %by blocks
                 
                 RTs_bycondbysubj{i,ii}{b,s} = RTs(c1234{i,ii}{b,s},b,s);
                 
@@ -105,9 +112,9 @@ end
 %remove the NaNs so you get the right error bars
 for i = 1:length(RTs_bycondbysubj)
     
-    for s = 1:size(cond1,2)  %by subjects
+    for s = 1:size(c1234{1,1},2)  %by subjects
         
-        for b = 1:size(cond1,1)  %by blocks
+        for b = 1:size(c1234{1,1},1)  %by blocks
             
             RTs_bycondbysubj{i,1}{b,s}(isnan(RTs_bycondbysubj{i,1}{b,s})) = [];
             RTs_bycondbysubj{i,2}{b,s}(isnan(RTs_bycondbysubj{i,2}{b,s})) = [];
@@ -120,7 +127,7 @@ end
 %then get mean across subjects, and SEM from that
 for i = 1:length(RTs_bycondbysubj)
     
-    for s = 1:size(cond1,2)  %by subjects
+    for s = 1:size(c1234{1,1},2)  %by subjects
         
         RT_means_bysubj{i,1}(s) = mean(vertcat(RTs_bycondbysubj{i,1}{:,s}));
         RT_means_bysubj{i,2}(s) = mean(vertcat(RTs_bycondbysubj{i,2}{:,s}));
