@@ -16,7 +16,7 @@ if nargin < 7
     
 end
 
-ylimit = 3.0;
+ylimit = 1.5;
 
 %blank either error or success trials
 %since 1 indexes successes in err_trial_idx input, invert to plot them

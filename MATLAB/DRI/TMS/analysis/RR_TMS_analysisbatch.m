@@ -179,6 +179,7 @@ success = cellfun(@(x,y) strcmp(x,y), correctans, subj_resp, 'UniformOutput', fa
 %it would be helpful to see the plots to make the differences)
 
 %TODO
+%carefully check NaNing error trials out - something fucky
 %FIX SEM CALCULATION
 %what goes fucky with the ruleRT finger trial filtering? Very few values
 %A left/ A right trial index and resultant mean RTs
