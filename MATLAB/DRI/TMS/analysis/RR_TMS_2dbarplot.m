@@ -60,6 +60,21 @@ for c12i = 1:size(c12,1)
     end
 end
 
+
+%c1234: columns are inferred/instructed
+%rows:
+%1. S-P-E
+%2. S-P-L
+%3. S-P-N
+%4. S-V-E
+%5. S-V-L
+%6. S-V-N
+%7. F-P-E
+%8. F-P-L
+%9. F-P-N
+%10. F-V-E
+%11. F-V-L
+%12. F-V-N
 for c4 = 1:size(cond4,3)
     
     for c123i = 1:size(c123,1)
@@ -71,46 +86,56 @@ end
         
       
 %get means for the conditions
-RTs_bycond = cell(size(c1234));
+RTs_bycondbysubj = cell(size(c1234));
 for i = 1:size(c1234,1)  %by number of condition combos
     
-    for ii = 1:size(c1234,2)
+    for ii = 1:size(c1234,2)  %by inf/ins
         
-        RT_vec = nan(sum(sum(cellfun(@length, c1234{i,ii}))),1);
-        
-        track=1;
         for s = 1:size(cond1,2)  %by subjects
             
-            for b = 1:size(cond1,1)
+            for b = 1:size(cond1,1)  %by blocks
                 
-                RT_ph = RTs(c1234{i,ii}{b,s},b,s);
-                
-                RT_vec(track:(track+length(RT_ph)-1)) = RT_ph;
-                
-                track = track+length(RT_ph);
-                
-                clear RT_ph
+                RTs_bycondbysubj{i,ii}{b,s} = RTs(c1234{i,ii}{b,s},b,s);
                 
             end
         end
-        
-        RTs_bycond{i,ii} = RT_vec;
-        
-        clear RT_vec track
-        
     end
 end
 
 %remove the NaNs so you get the right error bars
-for i = 1:length(RTs_bycond)
+for i = 1:length(RTs_bycondbysubj)
     
-    RTs_bycond{i,1}(isnan(RTs_bycond{i,1})) = [];
-    RTs_bycond{i,2}(isnan(RTs_bycond{i,2})) = [];
-    
+    for s = 1:size(cond1,2)  %by subjects
+        
+        for b = 1:size(cond1,1)  %by blocks
+            
+            RTs_bycondbysubj{i,1}{b,s}(isnan(RTs_bycondbysubj{i,1}{b,s})) = [];
+            RTs_bycondbysubj{i,2}{b,s}(isnan(RTs_bycondbysubj{i,2}{b,s})) = [];
+            
+        end
+    end
 end
 
-RT_means = cellfun(@(x) mean(x,'omitnan'), RTs_bycond);
-RT_sems = cellfun(@(x) sem(x), RTs_bycond);
+%get mean for each subject (so you have 7 means for each condition)
+%then get mean across subjects, and SEM from that
+for i = 1:length(RTs_bycondbysubj)
+    
+    for s = 1:size(cond1,2)  %by subjects
+        
+        RT_means_bysubj{i,1}(s) = mean(vertcat(RTs_bycondbysubj{i,1}{:,s}));
+        RT_means_bysubj{i,2}(s) = mean(vertcat(RTs_bycondbysubj{i,2}{:,s}));
+        
+    end
+    
+    RT_means_bysubj{i,1}(isnan(RT_means_bysubj{i,1})) = [];
+    RT_means_bysubj{i,2}(isnan(RT_means_bysubj{i,2})) = [];
+end
+
+
+
+RT_means = cell2mat(cellfun(@(x) mean(x), RT_means_bysubj, 'UniformOutput', false));
+RT_sems = cell2mat(cellfun(@(x) sem(x), RT_means_bysubj, 'UniformOutput', false));
+
 
 %prep some things for plotting error bars
 numgroups = 2;
