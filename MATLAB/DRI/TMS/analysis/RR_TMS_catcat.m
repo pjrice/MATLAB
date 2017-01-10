@@ -13,6 +13,7 @@ for ff = 1:length(filelist)
     ts_cat(:,:,:,ff) = ts_blocks;
     data_cat(:,:,ff) = data;
     ss_time_cat(ff,:) = ss_time;
+    subj_ids(ff,:) = subj_id;
     
     %trials x (condMatrix)(rpspns)(block#) x subject
 %     fuckit(:,1,ff) = cat(1,data{:,1});
@@ -21,7 +22,7 @@ for ff = 1:length(filelist)
     
 %     blockid_cat(:,ff) = blockid;
     
-    clearvars -except filelist ff emg_cat ts_cat data_cat ss_time_cat fuckit blockid_cat datapath
+    clearvars -except filelist ff emg_cat ts_cat data_cat ss_time_cat fuckit blockid_cat datapath subj_ids
     
 end
 
@@ -29,7 +30,7 @@ end
 
 clear ff
 
-filename = strcat(datapath,'\RR_TMS_subjcat.mat');
+filename = strcat(datapath,'/RR_TMS_subjcat.mat');
 save(filename,'-v7.3')
 
 y = filename;

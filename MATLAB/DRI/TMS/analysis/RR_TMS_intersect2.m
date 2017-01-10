@@ -1,6 +1,8 @@
 function c1234 = RR_TMS_intersect2(cond1,cond2,cond3,cond4)
 
 %just intersect each page to eventually get fully intersected indices
+%RTs_bycond = RR_TMS_intersect2(sf_trials,pmdver_trials,eslsns_trials,infins_trials);
+
 track=1;
 for c1 = 1:size(cond1,3)
     

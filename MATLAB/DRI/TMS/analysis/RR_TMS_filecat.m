@@ -2,7 +2,7 @@ function RR_TMS_filecat(datapath, subj_folder)
 
 %function to concatenate individual block files for a given RR_TMS subject
 
-cd(strcat(datapath, '\', subj_folder))
+cd(strcat(datapath, '/', subj_folder))
 disp(strcat('Folder is subject =',subj_folder))
 
 files = dir('*.mat');
@@ -30,7 +30,9 @@ for f = 1:length(s)
     data{f,9} = repmat(f,60,1);
     ss_time(f) = streamstart_time;
     filenames{f} = filename;
+    subj_id = subj_folder;
     
+    %generate blockids, put into data{f,10}
     if b=='y' 
         
 %         a = [0 1 0 1];
@@ -66,11 +68,13 @@ for f = 1:length(s)
     end
     data{f,10} = repmat(a,60,1);
     
-    clearvars -except files s f emg ts_blocks data ss_time filenames b datapath subj_folder
+    clearvars -except files s f emg ts_blocks data ss_time filenames b datapath subj_folder subj_id
 end
 
-clear b
 
-filename = strcat(datapath, '\', subj_folder,'cat.mat');
+filename = strcat(datapath, '/', subj_folder,'cat.mat');
+
+clear b s f subj_folder filenames
+
 save(filename)
     
