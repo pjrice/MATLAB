@@ -20,10 +20,10 @@ for f = 1:length(s)
     emg(:,f) = adblData_mat;
     ts_blocks(:,:,f) = timestamps;
     data{f,1} = condMatrix;
-    data{f,2} = evenoddchooser;
-    data{f,3} = fingerchooser;
-    data{f,4} = symbolchooser;
-    data{f,5} = abchooser;
+    data{f,2} = evenoddchooser; %whether even or odd was presented 0==Even
+    data{f,3} = fingerchooser; %whether index or middle was presented 0==Index
+    data{f,4} = symbolchooser; %whether A or B was presented 0==A
+    data{f,5} = abchooser; %placement of A/B on stimulus screen 0==A, first value prints on left, second on right
     data{f,6} = stim;
     data{f,7} = rpspns;
     data{f,8} = subj_resp;
