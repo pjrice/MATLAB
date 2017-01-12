@@ -19,19 +19,24 @@ for f = 1:length(s)
     
     emg(:,f) = adblData_mat;
     ts_blocks(:,:,f) = timestamps;
-    data{f,1} = condMatrix;
+    data{f,1} = condMatrix; %index of symbol and finger trials 0==symbol 1==finger
     data{f,2} = evenoddchooser; %whether even or odd was presented 0==Even
     data{f,3} = fingerchooser; %whether index or middle was presented 0==Index
     data{f,4} = symbolchooser; %whether A or B was presented 0==A
     data{f,5} = abchooser; %placement of A/B on stimulus screen 0==A, first value prints on left, second on right
-    data{f,6} = stim;
-    data{f,7} = rpspns;
-    data{f,8} = subj_resp;
-    data{f,9} = repmat(f,60,1);
-    ss_time(f) = streamstart_time;
-    filenames{f} = filename;
-    subj_id = subj_folder;
+    data{f,6} = stim; %value of the stimulus presented
+    data{f,7} = rpspns; %whether early, late, or no stimulation occurred; 0==early, 1==late, 2==no
+    data{f,8} = subj_resp; %subj response; L==Index, R==Middle (all subjs worked right-handed)
+    data{f,9} = repmat(f,60,1); %subj block number
+    ss_time(f) = streamstart_time; %system time of beginning of emg stream
+%     filenames{f} = filename;  %seems unnecessary, but keeping for now in
+%     case it breaks
+    subj_id = subj_folder; %subj id number
     
+    %index whether block was PMd or Vertex stimulation
+    %0==PMd 1==Vertex
+    %not in original subject files, so it has to be entered manually
+    %record of this can be found in 'Expt_record.xlsx'
     %generate blockids, put into data{f,10}
     if b=='y' 
         

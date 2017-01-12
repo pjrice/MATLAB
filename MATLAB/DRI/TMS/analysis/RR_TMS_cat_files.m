@@ -24,3 +24,7 @@ fname = RR_TMS_catcat(datapath);
 
 %load the newly created file
 load(fname)
+
+%create the project file containing all data necessary for analysis
+
+RR_TMS_createprojfile
