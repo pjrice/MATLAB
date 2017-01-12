@@ -47,10 +47,82 @@ subj_ids = reshape(repmat(subj_ids,1,(size(ts_corr,1)*size(ts_corr,3)))'...
 %make indicies of individual trial conditions (sym/fin, es/ls/ns, inf/ins)
 
 %first, determine if trials were inf/ins
+%cell2mat(data{1,2,1}) to get even/odd presentation
+%convert into 0/1 in order to compare
 
+evenodd = cell(size(data_cat,1),size(data_cat,3));
+evenodd_stim = cell(size(data_cat,1),size(data_cat,3));
+finger = cell(size(data_cat,1),size(data_cat,3));
+symbol = cell(size(data_cat,1),size(data_cat,3));
+ab = cell(size(data_cat,1),size(data_cat,3));
+subj_resp = cell(size(data_cat,1),size(data_cat,3));
+
+for s = 1:size(data_cat,3)  %by subjects
+    
+    for b = 1:size(data_cat,1)  %by blocks
+        
+        evenodd{b,s} = cell2mat(data_cat{b,2,s});
+        evenodd{b,s}(:,2) = [];
+        evenodd{b,s} = evenodd{b,s}-1; %0==Even; 1==Odd
+        
+        evenodd_stim{b,s} = data_cat{b,6,s};
+        evenodd_stim{b,s} = mod(evenodd_stim{b,s},2); %0==Even; 1==Odd
+        
+        finger{b,s} = cell2mat(data_cat{b,3,s});
+        finger{b,s}(:,2) = [];
+        finger{b,s} = finger{b,s}-1; %0==Index; 1==Middle
+        
+        symbol{b,s} = cell2mat(data_cat{b,4,s});
+        symbol{b,s}(:,2) = [];
+        symbol{b,s} = symbol{b,s}-1; %0==A; 1==B
+        
+        ab{b,s} = cell2mat(data_cat{b,5,s});
+        ab{b,s}(:,2) = [];
+        ab{b,s} = ab{b,s}-1; %0==A was on left; 1==A was on right
+        
+        subj_resp{b,s} = data_cat{b,8,s};
+        
+    end
+end
+
+%0==inferred; 1==instructed
+infins_trials = cellfun(@(x,y) eq(x,y), evenodd, evenodd_stim, 'UniformOutput', false);
+
+%reshape it to enter into data table
+infins_trials = cell2mat(infins_trials);
+infins_trials = reshape(infins_trials,(size(infins_trials,1)*size(infins_trials,2)),1);
+
+%get s/f trial index and reshape to enter into data table
+sf_trials = squeeze(cell2mat(data_cat(:,1,:)));
+sf_trials = reshape(sf_trials,(size(sf_trials,1)*size(sf_trials,2)),1);
+
+%get PMd/Vertex trial index and reshape to enter into data table
+pmdver_trials = squeeze(cell2mat(data_cat(:,10,:)));
+pmdver_trials = reshape(pmdver_trials,(size(pmdver_trials,1)*size(pmdver_trials,2)),1);
+
+%get Early/Late/No stimulation trial index and reshape to enter into data
+%table
+eslsns_trials = squeeze(cell2mat(data_cat(:,7,:)));
+eslsns_trials = reshape(eslsns_trials,(size(eslsns_trials,1)*size(eslsns_trials,2)),1);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %create data table
-T = table(tnum_subjblock,subj_ids,r_ruleRT,r_stimRT);
+RR_TMS_Table = table(tnum_subjblock,subj_ids,r_ruleRT,r_stimRT,...
+    sf_trials,pmdver_trials,eslsns_trials,infins_trials);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
