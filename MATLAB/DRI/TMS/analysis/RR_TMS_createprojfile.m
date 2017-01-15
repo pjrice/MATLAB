@@ -161,6 +161,17 @@ block_id = reshape(block_id,(size(block_id,1)*size(block_id,2)),1);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%TODO: rather than combining subconditions in a vector (i.e. sf_trials
+%where 0==symbol and 1==finger), just have vectors for each subcondition
+%(so, [symbol_trials] where 0==it wasn't a symbol trial and 1==it was a
+%symbol trial). Might make indexing easier later on?
+
+% [f,xi] = ksdensity(RT DATA);
+% plot(xi,f)
+%above will give you RT density plots that you were looking for (?)
+
+
+
 %create data table
 RR_TMS_Table = table(subj_ids,block_id,tnum_subjblock,r_ruleRT,r_stimRT,...
     sf_trials,pmdver_trials,eslsns_trials,infins_trials,evenodd,finger,...
