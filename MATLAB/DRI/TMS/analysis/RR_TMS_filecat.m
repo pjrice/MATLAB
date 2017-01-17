@@ -17,6 +17,11 @@ for f = 1:length(s)
     
     load(files(s(f)).name, 'adblData_mat', 'timestamps', 'condMatrix','evenoddchooser','fingerchooser','symbolchooser','abchooser','stim','streamstart_time','filename', 'rpspns', 'subj_resp')
     
+    %handle exception - for subject 2406, the first block (PMd in this
+    %case) is invalid - the coil had drifted off target (see
+    %Expt_record.xlsx). When this block's file is loaded, just NaN all of
+    %the relevant data (so our vector lengths are all good)
+    
     emg(:,f) = adblData_mat;
     ts_blocks(:,:,f) = timestamps;
     data{f,1} = condMatrix; %index of symbol and finger trials 0==symbol 1==finger
