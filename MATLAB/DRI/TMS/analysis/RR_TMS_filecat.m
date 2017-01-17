@@ -22,6 +22,12 @@ for f = 1:length(s)
     %Expt_record.xlsx). When this block's file is loaded, just NaN all of
     %the relevant data (so our vector lengths are all good)
     
+    if strcmp(files(s(f)).name,'2406_1.mat')
+        
+        %nuke from orbit here
+        
+    end
+        
     emg(:,f) = adblData_mat;
     ts_blocks(:,:,f) = timestamps;
     data{f,1} = condMatrix; %index of symbol and finger trials 0==symbol 1==finger
