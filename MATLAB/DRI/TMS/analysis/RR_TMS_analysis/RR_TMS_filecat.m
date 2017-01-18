@@ -24,7 +24,23 @@ for f = 1:length(s)
     
     if strcmp(files(s(f)).name,'2406_1.mat')
         
-        %nuke from orbit here
+        for q = 1:length(adblData_mat)
+            
+            adblData_mat{q}(1,:) = nan;
+            evenoddchooser{q}(:,:) = nan;
+            fingerchooser{q}(:,:) = nan;
+            symbolchooser{q}(:,:) = nan;
+            abchooser{q}(:,:) = nan;
+            subj_resp{q} = nan;
+            
+            
+        end
+        
+        timestamps(:,:) = nan;
+        condMatrix(:,:) = nan;
+        stim(:,:) = nan;
+        streamstart_time = nan;
+        rpspns(:,:) = nan;
         
     end
         

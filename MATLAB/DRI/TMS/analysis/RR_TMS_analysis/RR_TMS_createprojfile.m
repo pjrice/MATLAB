@@ -173,11 +173,18 @@ block_id = reshape(block_id,(size(block_id,1)*size(block_id,2)),1);
 
 
 %create data table
-RR_TMS_Table = table(subj_ids,block_id,tnum_subjblock,r_ruleRT,r_stimRT,...
+dtable = table(subj_ids,block_id,tnum_subjblock,r_ruleRT,r_stimRT,...
     sf_trials,pmdver_trials,eslsns_trials,infins_trials,evenodd,finger,...
     symbol,stim_values,evenodd_stim,ab);
 
-save(strcat(datapath, '/RR_TMS_Table.mat'),'RR_TMS_Table')
+%take care of remaining exceptions for 2406 block 1 (see Expt_record.xlsx)
+dtable.pmdver_trials(find(dtable.block_id==1 & dtable.subj_ids==2406)) = nan;
+dtable.infins_trials = double(dtable.infins_trials);
+dtable.infins_trials(find(dtable.block_id==1 & dtable.subj_ids==2406)) = nan;
+
+
+
+% save(strcat(datapath, '/RR_TMS_Table.mat'),'dtable')
 
 
 

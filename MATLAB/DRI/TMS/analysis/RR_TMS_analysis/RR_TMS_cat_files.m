@@ -22,6 +22,9 @@ end
 %cat subj files into group file
 fname = RR_TMS_catcat(datapath);
 
+%remove vars except for fname
+clearvars -except fname
+
 %load the newly created file
 load(fname)
 
