@@ -25,10 +25,10 @@ for s = 1:size(ts_cat,4)
 end
 
 %reshape ruleRT and stimRT to enter into data table
-r_ruleRT = reshape(ruleRT,...
+ruleRT = reshape(ruleRT,...
     (size(ruleRT,1)*size(ruleRT,2)*size(ruleRT,3)),1);
 
-r_stimRT = reshape(stimRT,...
+stimRT = reshape(stimRT,...
     (size(stimRT,1)*size(stimRT,2)*size(stimRT,3)),1);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -176,7 +176,7 @@ block_id = reshape(block_id,(size(block_id,1)*size(block_id,2)),1);
 
 
 %create data table
-dtable = table(subj_ids,block_id,tnum_subjblock,r_ruleRT,r_stimRT,...
+dtable = table(subj_ids,block_id,tnum_subjblock,ruleRT,stimRT,...
     sf_trials,pmdver_trials,eslsns_trials,infins_trials,evenodd,finger,...
     symbol,stim_values,evenodd_stim,ab,subj_resp);
 
@@ -201,11 +201,11 @@ success(s2406_b1_idx) = nan;
 %add to dtable
 dtable.success = success;
 
-%clear all vars except dtable
+%clear all vars except dtable and datapath
 clearvars -except dtable datapath
 
 %save
-save(strcat(datapath, '/RR_TMS_Table.mat'),'dtable')
+save(strcat(datapath, '/RR_TMS_Table.mat'))
 
 
 
