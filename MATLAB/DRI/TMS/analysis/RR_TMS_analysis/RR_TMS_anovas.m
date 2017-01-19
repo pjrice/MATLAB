@@ -237,7 +237,11 @@ within2.ns_Vstim = categorical(within2.ns_Vstim);
 within2.SymFin_InfIns = within2.Sym_Fin .* within2.Inf_Ins;
 
 %3. fitrm with the modified design
-rm = fitrm(stim_t,
+rm = fitrm(stim_t,'S_INF_NS-F_INS_VS~1','WithinDesign',within2);
+ranovatbl = ranova(rm,'WithinModel','Sym_Fin*Inf_Ins*ns_Vstim');
+
+%4. Use the interaction factor as the 'By' variable in multcompare
+multcompare(rm,'ns_Vstim','By','SymFin_InfIns')
 
 
 
