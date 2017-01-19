@@ -182,6 +182,15 @@ dtable.pmdver_trials(find(dtable.block_id==1 & dtable.subj_ids==2406)) = nan;
 dtable.infins_trials = double(dtable.infins_trials);
 dtable.infins_trials(find(dtable.block_id==1 & dtable.subj_ids==2406)) = nan;
 
+%from elements contained in dtable, determine what the correct answer
+%should have been for each trial
+RR_TMS_table_correctans
+
+%compare the correct answer to the subject's answer
+%haven't inserted subj response...
+
+%clear all vars except dtable
+clearvars -except dtable
 
 
 % save(strcat(datapath, '/RR_TMS_Table.mat'),'dtable')
