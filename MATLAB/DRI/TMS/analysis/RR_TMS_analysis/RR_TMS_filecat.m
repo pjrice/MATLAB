@@ -21,7 +21,6 @@ for f = 1:length(s)
     %case) is invalid - the coil had drifted off target (see
     %Expt_record.xlsx). When this block's file is loaded, just NaN all of
     %the relevant data (so our vector lengths are all good)
-    
     if strcmp(files(s(f)).name,'2406_1.mat')
         
         for q = 1:length(adblData_mat)
@@ -32,8 +31,7 @@ for f = 1:length(s)
             symbolchooser{q}(:,:) = nan;
             abchooser{q}(:,:) = nan;
             subj_resp{q} = nan;
-            
-            
+              
         end
         
         timestamps(:,:) = nan;

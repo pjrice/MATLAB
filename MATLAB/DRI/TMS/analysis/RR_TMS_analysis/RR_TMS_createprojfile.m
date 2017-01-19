@@ -118,6 +118,9 @@ pmdver_trials = reshape(pmdver_trials,(size(pmdver_trials,1)*size(pmdver_trials,
 eslsns_trials = squeeze(cell2mat(data_cat(:,7,:)));
 eslsns_trials = reshape(eslsns_trials,(size(eslsns_trials,1)*size(eslsns_trials,2)),1);
 
+%reshape subject responses to enter into data table
+subj_resp = vertcat(subj_resp{:,:});
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %add additional trial conditions for further inquiry
@@ -175,7 +178,7 @@ block_id = reshape(block_id,(size(block_id,1)*size(block_id,2)),1);
 %create data table
 dtable = table(subj_ids,block_id,tnum_subjblock,r_ruleRT,r_stimRT,...
     sf_trials,pmdver_trials,eslsns_trials,infins_trials,evenodd,finger,...
-    symbol,stim_values,evenodd_stim,ab);
+    symbol,stim_values,evenodd_stim,ab,subj_resp);
 
 %take care of remaining exceptions for 2406 block 1 (see Expt_record.xlsx)
 dtable.pmdver_trials(find(dtable.block_id==1 & dtable.subj_ids==2406)) = nan;
@@ -187,13 +190,22 @@ dtable.infins_trials(find(dtable.block_id==1 & dtable.subj_ids==2406)) = nan;
 RR_TMS_table_correctans
 
 %compare the correct answer to the subject's answer
-%haven't inserted subj response...
+%take care of 2406 block1
+success = double(strcmp(dtable.subj_resp,dtable.correctans));
+
+%quickly index 2406 block 1 trials
+s2406_b1_idx = find(dtable.subj_ids==2406 & dtable.block_id==1);
+%nan these "successes"
+success(s2406_b1_idx) = nan;
+
+%add to dtable
+dtable.success = success;
 
 %clear all vars except dtable
-clearvars -except dtable
+clearvars -except dtable datapath
 
-
-% save(strcat(datapath, '/RR_TMS_Table.mat'),'dtable')
+%save
+save(strcat(datapath, '/RR_TMS_Table.mat'),'dtable')
 
 
 
