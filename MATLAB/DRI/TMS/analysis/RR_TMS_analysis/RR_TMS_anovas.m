@@ -244,5 +244,99 @@ ranovatbl = ranova(rm,'WithinModel','Sym_Fin*Inf_Ins*ns_Vstim');
 multcompare(rm,'ns_Vstim','By','SymFin_InfIns')
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+%do a 2x2 ANOVA of data of interest, think about making it into a function
+%(we will need to do a lot of them)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%First:
+% Create a table reflecting the within subject factors 'S/F', 
+%'Inf/Ins', and 'ns/Vstim' and their levels
+factorNames = {'Sym_Fin','PMd_Ver'};
+within = table({'S';'S';'F';'F'},...
+    {'PMd';'Ver';'PMd';'Ver'},'VariableNames',factorNames);
+
+%Second:
+%Index condition combo trials and get means
+%rows: 8 subjects
+%columns: 4 condition combos
+%each cell contains vector of indexed trials
+
+%ONLY CORRECT TRIALS
+
+%get trial indices
+subj_ids = unique(dtable.subj_ids);
+%for stimRTs
+stim_SFPV_tidx = cell(8,4);
+for i = 1:length(subj_ids)
+    
+    %S,PMd
+    stim_SFPV_tidx{i,1} = find(dtable.subj_ids==subj_ids(i) &...
+        dtable.success==1 &...
+        dtable.sf_trials==0 &...
+        dtable.pmdver_trials==0);
+    
+    %S,Ver
+    stim_SFPV_tidx{i,2} = find(dtable.subj_ids==subj_ids(i) &...
+        dtable.success==1 &...
+        dtable.sf_trials==0 &...
+        dtable.pmdver_trials==1);
+    
+    %F,PMd
+    stim_SFPV_tidx{i,3} = find(dtable.subj_ids==subj_ids(i) &...
+        dtable.success==1 &...
+        dtable.sf_trials==1 &...
+        dtable.pmdver_trials==0);
+    
+    %F,Ver
+    stim_SFPV_tidx{i,4} = find(dtable.subj_ids==subj_ids(i) &...
+        dtable.success==1 &...
+        dtable.sf_trials==1 &...
+        dtable.pmdver_trials==1);
+   
+end
+
+%Third
+%Create tables storing the data
+%rows: observations (8 rows, 8 subjects) (means of RTs)
+%columns: conditions (8 columns, 8 condition combos)
+
+%get the means
+
+stim_SFPV_means = cell2mat(cellfun(@(x) mean(dtable.stimRT(x),'omitnan'),...
+    stim_SFPV_tidx, 'UniformOutput', false));
+
+%make the table
+varNames = {'S_P','S_V','F_P','F_V'};
+stim_t = array2table(stim_SFPV_means,'VariableNames',varNames);
+
+%Fourth
+%fit the repeated measures models
+stim_rm = fitrm(stim_t,'S_P-F_V~1','WithinDesign',within);
+
+%Fifth
+%run repeated measures ANOVAs
+[stim_ranovatbl] = ranova(stim_rm, 'WithinModel','Sym_Fin*PMd_Ver');
+
+%Sixth
+%make pairwise comparisons for the two-way interactions
+
+%this gives us what we want
+multcompare(stim_rm, 'PMd_Ver','By','Sym_Fin')
+multcompare(stim_rm, 'Sym_Fin','By','PMd_Ver')
+
+
+
+
 
 
