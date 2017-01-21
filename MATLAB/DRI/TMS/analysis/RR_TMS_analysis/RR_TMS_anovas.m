@@ -24,7 +24,7 @@ within = table({'S';'S';'S';'S';'F';'F';'F';'F'},...
     {'NS';'VS';'NS';'VS';'NS';'VS';'NS';'VS'},'VariableNames',factorNames);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+1
 %Second:
 %Index condition combo trials and get means
 %rows: 8 subjects
@@ -191,6 +191,7 @@ rule_t = array2table(rule_nsVs_means,'VariableNames',varNames);
 stim_rm = fitrm(stim_t,'S_INF_NS-F_INS_VS~1','WithinDesign',within);
 rule_rm = fitrm(rule_t,'S_INF_NS-F_INS_VS~1','WithinDesign',within);
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Fifth
@@ -249,6 +250,8 @@ multcompare(rm,'ns_Vstim','By','SymFin_InfIns')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+rm = fitrm(d2table,'Var1~Var2*Var3*Var4');
+ranovatbl = ranova(rm);
 
 
 
