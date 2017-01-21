@@ -99,6 +99,28 @@ stats_PVELII = RR_TMS_ANOVA1(dtable,stimIdx,5,[7 8 9]);
 stats_all = RR_TMS_ANOVA1(dtable,stimIdx,5,[6 7 8 9]);
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%try repeated measures anova with SF PV EL InfINs as predictors
+%with means table from RR_TMS_Rtable4ANOVA
+%check that you are indexing trials in that script properly
+
+
+% Create a table reflecting the within subject factors 'S/F', 
+%'Inf/Ins', and 'ns/Vstim' and their levels
+factorNames = {'SF','PV','EL','InfIns'};
+
+within = table({'S';'S';'S';'S';'S';'S';'S';'S';'F';'F';'F';'F';'F';'F';'F';'F'},...
+    {'P';'P';'P';'P';'V';'V';'V';'V';'P';'P';'P';'P';'V';'V';'V';'V'},...
+    {'E';'E';'L';'L';'E';'E';'L';'L';'E';'E';'L';'L';'E';'E';'L';'L'},...
+    {'Inf';'Ins';'Inf';'Ins';'Inf';'Ins';'Inf';'Ins';'Inf';'Ins';'Inf';'Ins';'Inf';'Ins';'Inf';'Ins'},'VariableNames',factorNames);
+
+%fit model
+stim_rm = fitrm(means_table,'cond_mean~SF*PV*EL*InfIns','WithinDesign',within);
+
+
+%run ANOVA
+[stim_ranovatbl] = ranova(stim_rm);
 
 
 

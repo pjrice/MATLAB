@@ -50,7 +50,7 @@ means = cell2mat(cellfun(@(x) mean(dtable.stimRT(x),'omitnan'), indx, 'UniformOu
 
 %make table
 
-repelem(subj_ids,length(cond_combos))
+repelem(subj_ids,length(cond_combos));
 
 cc_all = repmat(cond_combos,length(subj_ids),1);
 
