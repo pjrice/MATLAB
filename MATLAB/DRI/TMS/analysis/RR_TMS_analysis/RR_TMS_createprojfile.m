@@ -201,6 +201,48 @@ success(s2406_b1_idx) = nan;
 %add to dtable
 dtable.success = success;
 
+%get individual condition combo indices
+cond_combos = double([permpos(0,4);permpos(1,4);permpos(2,4);permpos(3,4);permpos(4,4)]);
+
+%actually 24, not 16 (ES/LS/NS)
+
+%figure out how to handle NS
+%this is how:
+%>> [~,I] = sort(cond_combos(:,3));  %I is index of rearrangment
+%>> cond_combos(:,:) = cond_combos(I,:);  %check to make sure this is
+% rearranging the way you think it is
+%Then cut cond_combos in half, change all values in third column to 2, then
+%cat the modified half to the end of cond_combos and you have your
+%cond_combos reference
+
+%will need to reorg following table (make actual matlab table?)
+
+%cond_combos:
+% SF PV EL InfIns
+%1.  S P E INF
+%2.  F P E INF
+%3.  S V E INF
+%4.  S P L INF
+%5.  S P E INS
+%6.  F V E INF
+%7.  F P L INF
+%8.  F P E INS
+%9.  S V L INF
+%10. S V E INS
+%11. S P L INS
+%12. F V L INF
+%13. F V E INS
+%14. F P L INS
+%15. S V L INS
+%16. F V L INS
+
+%ismember(x,m,'rows')
+% a= [0 0 1 0]
+% find(ismember(cond_combos,a,'rows')) == 4
+
+%bootstrap conditions for each subj to find outliers, add outlier idx to
+%table
+
 %clear all vars except dtable and datapath
 clearvars -except dtable datapath
 
