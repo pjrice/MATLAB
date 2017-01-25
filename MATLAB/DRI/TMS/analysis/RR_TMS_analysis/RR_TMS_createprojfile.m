@@ -203,17 +203,14 @@ dtable.success = success;
 
 %get individual condition combo indices
 cond_combos = double([permpos(0,4);permpos(1,4);permpos(2,4);permpos(3,4);permpos(4,4)]);
+[~,I] = sort(cond_combos(:,3));
+cond_combos(:,:) = cond_combos(I,:);
+ph = cond_combos(1:length(cond_combos)/2,:);
+ph(:,3) = 2;
+cond_combos = vertcat(cond_combos,ph);
+
 
 %actually 24, not 16 (ES/LS/NS)
-
-%figure out how to handle NS
-%this is how:
-%>> [~,I] = sort(cond_combos(:,3));  %I is index of rearrangment
-%>> cond_combos(:,:) = cond_combos(I,:);  %check to make sure this is
-% rearranging the way you think it is
-%Then cut cond_combos in half, change all values in third column to 2, then
-%cat the modified half to the end of cond_combos and you have your
-%cond_combos reference
 
 %will need to reorg following table (make actual matlab table?)
 
@@ -236,15 +233,45 @@ cond_combos = double([permpos(0,4);permpos(1,4);permpos(2,4);permpos(3,4);permpo
 %15. S V L INS
 %16. F V L INS
 
+%17.
+%18.
+%19.
+%20.
+%21.
+%22.
+%23.
+%24.
+
 %ismember(x,m,'rows')
 % a= [0 0 1 0]
 % find(ismember(cond_combos,a,'rows')) == 4
+
+
+for i = 1:height(dtable)
+    
+    testvec = [dtable.sf_trials(i),dtable.pmdver_trials(i),dtable.eslsns_trials(i),dtable.infins_trials(i)];
+    
+    if isnan(testvec)
+        
+        cond_ind(i,1) = nan;
+        
+    else
+    
+        cond_ind(i,1) = find(ismember(cond_combos,testvec,'rows'));
+    
+    end
+    
+    clear testvec
+    
+end
+    
+dtable.cond_ind = cond_ind;
 
 %bootstrap conditions for each subj to find outliers, add outlier idx to
 %table
 
 %clear all vars except dtable and datapath
-clearvars -except dtable datapath
+clearvars -except dtable datapath cond_combos
 
 %save
 save(strcat(datapath, '/RR_TMS_Table.mat'))

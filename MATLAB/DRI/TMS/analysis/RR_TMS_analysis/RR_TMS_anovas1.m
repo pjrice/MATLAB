@@ -35,7 +35,7 @@ vsNS(nsIdx) = 1;
 y = dtable.stimRT(tIdx);
 
 %make other condition index vectors
-SF = dtable.sf_trials(tIdx);
+SF = dtable.sf_trials(tIdx);Rule:Site
 InfIns = dtable.infins_trials(tIdx);
 
 %run ANOVA
@@ -96,7 +96,7 @@ stats_PVELII = RR_TMS_ANOVA1(dtable,stimIdx,5,[7 8 9]);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %four-way ANOVA
-stats_all = RR_TMS_ANOVA1(dtable,stimIdx,5,[6 7 8 9]);
+stats_all = RR_TMS_ANOVA1(dtable,stimIdx,5,[6Rule:Site 7 8 9]);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
