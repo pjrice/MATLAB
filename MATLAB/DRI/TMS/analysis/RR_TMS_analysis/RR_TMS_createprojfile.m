@@ -180,6 +180,14 @@ dtable = table(subj_ids,block_id,tnum_subjblock,ruleRT,stimRT,...
     sf_trials,pmdver_trials,eslsns_trials,infins_trials,evenodd,finger,...
     symbol,stim_values,evenodd_stim,ab,subj_resp);
 
+% for R
+% d2table = table(subj_ids,block_id,tnum_subjblock,ruleRT,stimRT,...
+%     sf_trials,pmdver_trials,eslsns_trials,infins_trials,evenodd,finger,...
+%     symbol,stim_values,evenodd_stim,ab,subj_resp,'VariableNames',...
+%     {'subjID';'blockID';'tNum_subjBlock';'ruleRT';'stimRT';'SF';'PV';...
+%     'ELN';'infIns';'evenOdd';'finger';'symbol';'stimValues';...
+%     'evenOdd_stim';'ab';'subjResp');
+
 %take care of remaining exceptions for 2406 block 1 (see Expt_record.xlsx)
 dtable.pmdver_trials(find(dtable.block_id==1 & dtable.subj_ids==2406)) = nan;
 dtable.infins_trials = double(dtable.infins_trials);
@@ -201,13 +209,13 @@ success(s2406_b1_idx) = nan;
 %add to dtable
 dtable.success = success;
 
-%get individual condition combo indices
-cond_combos = double([permpos(0,4);permpos(1,4);permpos(2,4);permpos(3,4);permpos(4,4)]);
-[~,I] = sort(cond_combos(:,3));
-cond_combos(:,:) = cond_combos(I,:);
-ph = cond_combos(1:length(cond_combos)/2,:);
-ph(:,3) = 2;
-cond_combos = vertcat(cond_combos,ph);
+% %get individual condition combo indices
+% cond_combos = double([permpos(0,4);permpos(1,4);permpos(2,4);permpos(3,4);permpos(4,4)]);
+% [~,I] = sort(cond_combos(:,3));
+% cond_combos(:,:) = cond_combos(I,:);
+% ph = cond_combos(1:length(cond_combos)/2,:);
+% ph(:,3) = 2;
+% cond_combos = vertcat(cond_combos,ph);
 
 
 %actually 24, not 16 (ES/LS/NS)
@@ -247,25 +255,25 @@ cond_combos = vertcat(cond_combos,ph);
 % find(ismember(cond_combos,a,'rows')) == 4
 
 
-for i = 1:height(dtable)
-    
-    testvec = [dtable.sf_trials(i),dtable.pmdver_trials(i),dtable.eslsns_trials(i),dtable.infins_trials(i)];
-    
-    if isnan(testvec)
-        
-        cond_ind(i,1) = nan;
-        
-    else
-    
-        cond_ind(i,1) = find(ismember(cond_combos,testvec,'rows'));
-    
-    end
-    
-    clear testvec
-    
-end
-    
-dtable.cond_ind = cond_ind;
+% for i = 1:height(dtable)
+%     
+%     testvec = [dtable.sf_trials(i),dtable.pmdver_trials(i),dtable.eslsns_trials(i),dtable.infins_trials(i)];
+%     
+%     if isnan(testvec)
+%         
+%         cond_ind(i,1) = nan;
+%         
+%     else
+%     
+%         cond_ind(i,1) = find(ismember(cond_combos,testvec,'rows'));
+%     
+%     end
+%     
+%     clear testvec
+%     
+% end
+%     
+% dtable.cond_ind = cond_ind;
 
 %bootstrap conditions for each subj to find outliers, add outlier idx to
 %table
@@ -277,6 +285,18 @@ clearvars -except dtable datapath cond_combos
 save(strcat(datapath, '/RR_TMS_Table.mat'))
 
 
+% for R
+d2table = table(dtable.subj_ids,dtable.block_id,dtable.tnum_subjblock,...
+    dtable.ruleRT,dtable.stimRT,dtable.sf_trials,dtable.pmdver_trials,...
+    dtable.eslsns_trials,dtable.infins_trials,dtable.evenodd,...
+    dtable.finger,dtable.symbol,dtable.stim_values,dtable.evenodd_stim,...
+    dtable.ab,dtable.subj_resp,dtable.correctans,dtable.success,...
+    'VariableNames',...
+    {'subjID';'blockID';'tNum_subjBlock';'ruleRT';'stimRT';'SF';'PV';...
+    'ELN';'infIns';'evenOdd';'finger';'symbol';'stimValues';...
+    'evenOdd_stim';'ab';'subjResp';'correctAns';'success'});
+
+writetable(d2table,'table4R.txt')
 
 
 
